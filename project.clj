@@ -8,10 +8,11 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.229"]
+                 [lein-doo "0.1.7"]
                  [org.clojure/core.async "0.2.395"
                   :exclusions [org.clojure/tools.reader]]]
 
-  :plugins [[lein-cljsbuild "1.1.5" :exclusions [[org.clojure/clojure]]]]
+  :plugins [[lein-doo "0.1.7"] [lein-cljsbuild "1.1.5" :exclusions [[org.clojure/clojure]]]]
 
   :source-paths ["src"]
 
@@ -35,4 +36,9 @@
                                :output-to            "resources/public/js/compiled/client.js"
                                :output-dir           "resources/public/js/compiled/out"
                                :source-map-timestamp true
-                               }}]})
+                               }}
+               {:id           "test"
+                :source-paths ["src" "test"]
+                :compiler     {:main          tests
+                               :optimizations :none
+                               :output-to     "resources/public/cljs/tests/all-tests.js"}}]})

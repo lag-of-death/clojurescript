@@ -6,3 +6,6 @@ To run:
 4. node resources/server/index.js
 
 Go to http://localhost:4000.
+
+Tests can be run with:
+`lein doo phantom test once`
