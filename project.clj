@@ -9,6 +9,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.229"]
                  [lein-doo "0.1.7"]
+                 [reagent "0.6.0"]
                  [org.clojure/core.async "0.2.395"
                   :exclusions [org.clojure/tools.reader]]]
 

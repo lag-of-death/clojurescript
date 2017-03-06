@@ -1,7 +1,8 @@
-(ns client.core)
+(ns client.core
+  (:require
+    [client.helpers :as helpers]
+    [reagent.core :as reagent]))
 
-(enable-console-print!)
+(defn app [] [:div [:p (helpers/greet-visitor)]])
 
-(defn greet-visitor [] "Hello world!")
-
-(println (greet-visitor))
+(reagent/render [app] (.getElementById js/document "app"))
