@@ -1,5 +1,7 @@
 (ns client.tests
-  (:require [cljs.test :refer-macros [deftest is testing run-tests]]))
+  (:require
+    [client.core :refer [greet-visitor]]
+    [cljs.test :refer-macros [deftest is testing run-tests]]))
 
-(deftest dummy-test
-  (is (= 1 1)))
+(deftest greeting-visitor
+  (is (= "Hello world!" (greet-visitor))))

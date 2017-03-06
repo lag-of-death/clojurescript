@@ -2,4 +2,6 @@
 
 (enable-console-print!)
 
-(println "Hello world!")
+(defn greet-visitor [] "Hello world!")
+
+(println (greet-visitor))
