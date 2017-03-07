@@ -8,6 +8,10 @@
   },
   "devDependencies": {},
   "scripts": {
+    "try": "npm run build && npm test",
+    "repl": "lein trampoline cljsbuild repl-rhino",
+    "build": "lein cljsbuild once client && lein cljsbuild once server",
+    "start": "node resources/server/index.js",
     "test": "lein doo phantom test once"
   },
   "keywords": [],
