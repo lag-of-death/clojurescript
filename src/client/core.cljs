@@ -8,10 +8,10 @@
 
 (defonce state (reagent/atom []))
 
+(reagent/render [todo/app state] (.getElementById js/document "app"))
+
 (def CHANNEL (chan))
 
 (http/get "http://localhost:4000/todos" {:channel CHANNEL})
 
 (go (let [res (<! CHANNEL)] (swap! state (fn [] (:body res)))))
-
-(reagent/render [todo/app state] (.getElementById js/document "app"))
