@@ -4,6 +4,7 @@
     [client.helpers :as helpers]
     [shared.core :refer [del-todo]]
     [cljs-http.client :as http]
+    [client.todo.button :refer [button]]
     [cljs.core.async :refer [<!]]
     [reagent.core :as reagent]))
 
@@ -12,8 +13,6 @@
     (let
       [res (<! (http/delete (str "http://localhost:4000/todos/" todo-id)))]
       (del-todo state (:body res)))))
-
-(defn button [on-delete] [:button {:on-click on-delete} "x"])
 
 (def todo
   (fn [on-delete value]
