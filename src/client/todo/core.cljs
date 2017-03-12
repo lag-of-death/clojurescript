@@ -4,7 +4,7 @@
     [client.helpers :as helpers]
     [shared.core :refer [del-todo]]
     [cljs-http.client :as http]
-    [client.todo.todo :refer [todo]]
+    [client.todo.todos :refer [todos]]
     [cljs.core.async :refer [<!]]
     [reagent.core :as reagent]))
 
@@ -14,12 +14,8 @@
       [res (<! (http/delete (str "http://localhost:4000/todos/" todo-id)))]
       (del-todo state (:body res)))))
 
-(defn map-to-lis [state on-delete]
-  (let [on-del (partial on-delete state)]
-    (-> (partial todo on-del)
-        (map @state))))
-
 (defn app [given-state]
   (fn [given-state]
-    [:div [:p "TODO example"]
-     [:ul (map-to-lis given-state on-del-btn-clicked)]]))
+    (let [todos (todos given-state on-del-btn-clicked)]
+      [:div [:p "TODO example"]
+       [:ul todos]])))
