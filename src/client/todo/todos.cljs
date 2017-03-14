@@ -3,5 +3,5 @@
 
 (defn todos [state on-delete]
   (let [on-del (partial on-delete state)]
-    (-> (partial todo on-del)
+    (-> (partial todo on-del state)
         (map @state))))
