@@ -4,4 +4,4 @@
 (def todo
   (fn [on-delete value]
     (let [button (button (partial on-delete (:id value)))]
-      ^{:key value} [:li (:name value) button])))
+      ^{:key (:id value)} [:li (:name value) button])))
