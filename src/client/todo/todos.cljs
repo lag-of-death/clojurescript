@@ -1,7 +1,7 @@
 (ns client.todo.todos
   (:require [client.todo.todo :refer [todo]]))
 
-(defn todos [state on-delete]
+(defn todos [on-delete state deref-state]
   (let [on-del (partial on-delete state)]
     (-> (partial todo on-del state)
-        (map @state))))
+        (map deref-state))))

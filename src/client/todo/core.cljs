@@ -11,12 +11,17 @@
     [reagent.core :as reagent]))
 
 (defonce input-atom (reagent/atom ""))
+(defonce filter-todos-by (reagent/atom ""))
 
 (defn on-del-btn-clicked [state todo-id]
   (go
     (let
       [res (<! (http/delete (str "http://localhost:4000/todos/" todo-id)))]
       (del-todo state (:body res)))))
+
+(defn show-done-todos [] (swap! filter-todos-by (fn [] "done")))
+(defn show-to-do-todos [] (swap! filter-todos-by (fn [] "to-do")))
+(defn show-all-todos [] (swap! filter-todos-by (fn [] "all")))
 
 (defn on-add-btn-clicked [state todo-name]
   (go
@@ -28,9 +33,17 @@
 
 (defn app [given-state]
   (fn [given-state]
-    (let [todos (todos given-state on-del-btn-clicked)]
+    (let [partial-todos (partial todos on-del-btn-clicked)]
       [:div [:p "TODO example"]
-       [:ul todos]
+       [:div [:button {:on-click show-done-todos} [:span "done"]]]
+       [:div [:button {:on-click show-all-todos} [:span "all"]]]
+       [:div [:button {:on-click show-to-do-todos} [:span "to-do"]]]
+       [:ul (cond
+              (= @filter-todos-by "done") (partial-todos given-state (filter (fn [todo] (:is-done todo)) @given-state))
+              (= @filter-todos-by "all") (partial-todos given-state @given-state)
+              (= @filter-todos-by "to-do") (partial-todos given-state (filter (fn [todo] (not (:is-done todo))) @given-state))
+              :else (partial-todos given-state @given-state))
+        ]
        [:div
         [:span "add todo:"]
         [:input {:on-change #(on-input-change input-atom %)}]
