@@ -12,7 +12,7 @@
                 [todo-to-mark todo]
                 (if
                   (= (:id todo) (:id todo-to-mark))
-                  (update todo :is-done #(if (:is-done todo) false true))
+                  (update todo :is-done #(not (:is-done todo)))
                   todo)))
 
 
