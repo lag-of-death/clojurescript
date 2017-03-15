@@ -7,6 +7,7 @@
     [client.todo.todos :refer [todos]]
     [client.todo.button :refer [button]]
     [cljs.core.async :refer [<!]]
+    [clojure.string :refer [blank?]]
     [reagent.core :as reagent]))
 
 (defonce input-atom (reagent/atom ""))
@@ -17,11 +18,17 @@
       [res (<! (http/delete (str "http://localhost:4000/todos/" todo-id)))]
       (del-todo state (:body res)))))
 
-(defn on-add-btn-clicked [state todo-name]
+(defn ask-server-to-add-todo [state todo-name]
   (go
     (let
       [res (<! (http/post "http://localhost:4000/todos" {:json-params {:todo-name todo-name}}))]
       (add-todo state (js->clj (:body res))))))
+
+(defn on-add-btn-clicked [state todo-name]
+  (if
+    (blank? todo-name)
+    (js/alert "Please define your TODO.")
+    (ask-server-to-add-todo state todo-name)))
 
 (defn on-input-change [input-atom evt] (swap! input-atom (fn [old-val] (-> evt .-target .-value))))
 
