@@ -6,15 +6,16 @@
 (defonce express (nodejs/require "express"))
 (defonce body-parser (nodejs/require "body-parser"))
 
-(def todos (atom [{:name "Learn ClojureScript" :is-done false :id "0"}
-                  {:name "Write a great app in ClojureScript" :is-done false :id "1"}]))
+(def todos (atom [{:name "Learn ClojureScript" :is-done false :id 0}
+                  {:name "Write a great app in ClojureScript" :is-done false :id 1}]))
 
 (defn get-id [req]
   (-> (.-params req)
       (js->clj)
-      (get "id")))
+      (get "id")
+      (js/parseFloat)))
 
-(defn get-random-id [] (+ "" (.random js/Math)))
+(defn get-random-id [] (.random js/Math))
 
 (defn gen-next-todo [state todo-name]
   (let [new-todo {:name todo-name :is-done false :id (get-random-id)}]
