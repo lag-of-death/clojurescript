@@ -19,7 +19,7 @@
 
 (defn gen-next-todo [state todo-name]
   (let [new-todo {:name todo-name :is-done false :id (get-random-id)}]
-    (swap! state (fn [old-state] (conj old-state new-todo))) new-todo))
+    (add-todo state new-todo) new-todo))
 
 (defn -main [& args]
   (let [app (express)]
