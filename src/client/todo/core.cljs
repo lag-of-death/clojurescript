@@ -11,7 +11,7 @@
     [reagent.core :as reagent]))
 
 (defonce input-atom (reagent/atom ""))
-(defonce filter-todos-by (reagent/atom ""))
+(defonce filter-todos-by (reagent/atom "all"))
 
 (defn on-del-btn-clicked [state todo-id]
   (go
@@ -34,7 +34,7 @@
 (defn app [given-state]
   (fn [given-state]
     (let [partial-todos (partial todos on-del-btn-clicked)]
-      [:div [:p "TODO example"]
+      [:div [:p @filter-todos-by " " "todos"]
        [:div [:button {:on-click show-done-todos} [:span "done"]]]
        [:div [:button {:on-click show-all-todos} [:span "all"]]]
        [:div [:button {:on-click show-to-do-todos} [:span "to-do"]]]
