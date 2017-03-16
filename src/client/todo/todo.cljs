@@ -7,8 +7,8 @@
     [client.todo.button :refer [button]]))
 
 (defn on-click [todo todos]
-  (go (let [res (<! (http/post (str "http://localhost:4000/todos/" (:id todo))))]))
-  (mark-todo-as-done todos todo))
+  (go (let [res (<! (http/post (str "http://localhost:4000/todos/" (:id todo))))]
+        (mark-todo-as-done todos (:body res)))))
 
 (def todo
   (fn [on-delete todos value]

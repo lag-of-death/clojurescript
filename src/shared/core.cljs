@@ -19,4 +19,4 @@
 (defn mark-todo-as-done [todos todo-to-mark]
   (swap! todos
          (fn [old-todos]
-           (map (partial map-todo todo-to-mark) old-todos))))
+           (map (partial map-todo todo-to-mark) old-todos))) todo-to-mark)
