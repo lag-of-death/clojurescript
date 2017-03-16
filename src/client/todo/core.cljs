@@ -35,9 +35,10 @@
   (fn [given-state]
     (let [partial-todos (partial todos on-del-btn-clicked)]
       [:div [:p @filter-todos-by " " "todos"]
-       [:div [:button {:on-click show-done-todos} [:span "done"]]]
-       [:div [:button {:on-click show-all-todos} [:span "all"]]]
-       [:div [:button {:on-click show-to-do-todos} [:span "to-do"]]]
+       [:div
+        [:button {:on-click show-all-todos} [:span "all"]]
+        [:button {:on-click show-done-todos} [:span "done"]]
+        [:button {:on-click show-to-do-todos} [:span "to-do"]]]
        [:ul (case @filter-todos-by
               "done" (partial-todos given-state (filter (fn [todo] (:is-done todo)) @given-state))
               "all" (partial-todos given-state @given-state)
