@@ -3,28 +3,29 @@
   (:require
     [cljs.core.async :refer [<!]]
     [client.channels :as channels]
-    [shared.core :as shared]
-    [client.state :as state]))
+    [shared.core :as shared]))
 
-(defn react-on-changes []
-  (go (let [res (<! channels/all-todos-channel)] (reset! state/todos (:body res))))
-
-  (go
-    (while true
-      (let [res (<! channels/done-todo-channel)] (shared/mark-todo-as-done state/todos (:body res)))))
+(defn create-store [state]
+  (go (let [res (<! channels/all-todos-channel)] (swap! state assoc-in [:todos] (:body res))))
 
   (go
     (while true
-      (let [res (<! channels/del-todo-channel)] (shared/del-todo state/todos (:body res)))))
+      (let [res (<! channels/done-todo-channel)] (swap! state assoc-in [:todos] (shared/change-todo-status (:todos @state) (:body res))))))
 
   (go
     (while true
-      (let [res (<! channels/add-todo-channel)] (shared/add-todo state/todos (js->clj (:body res))))))
+      (let [res (<! channels/del-todo-channel)] (swap! state assoc-in [:todos] (shared/filter-out-todo (:todos @state) (:body res))))))
 
   (go
     (while true
-      (let [res (<! channels/todo-input-channel)] (reset! state/input-atom res))))
+      (let [res (<! channels/add-todo-channel)] (swap! state assoc-in [:todos] (shared/cons-todo (:todos @state) (js->clj (:body res)))))))
 
   (go
     (while true
-      (let [filter-by-status (<! channels/filter-todos-channel)] (reset! state/filter-todos-by filter-by-status)))))
+      (let [res (<! channels/todo-input-channel)] (swap! state assoc-in [:input] res))))
+
+  (go
+    (while true
+      (let [filter-by-status (<! channels/filter-todos-channel)] (swap! state assoc-in [:filter-todos-by] filter-by-status))))
+
+  state)

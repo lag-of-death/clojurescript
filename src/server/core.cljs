@@ -1,6 +1,6 @@
 (ns server.core
   (:require
-    [shared.core :refer [del-todo add-todo mark-todo-as-done]]
+    [server.helpers :refer [del-todo add-todo mark-todo]]
     [cljs.nodejs :as nodejs]))
 
 (defonce express (nodejs/require "express"))
@@ -49,7 +49,7 @@
                   (get-id)
                   (#(filter (fn [todo] (= (:id todo) %)) @todos))
                   (first)
-                  (mark-todo-as-done todos)
+                  (mark-todo todos)
                   (clj->js)
                   (.json res))))
 
