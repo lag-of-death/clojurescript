@@ -1,52 +1,42 @@
 (ns client.todo.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-    [client.helpers :as helpers]
-    [shared.core :refer [del-todo add-todo]]
     [cljs-http.client :as http]
-    [client.todo.todos :refer [todos]]
-    [client.todo.button :refer [button]]
-    [cljs.core.async :refer [<!]]
-    [clojure.string :refer [blank?]]
-    [reagent.core :as reagent]))
+    [client.todo.todos :refer [generate-todos]]
+    [cljs.core.async :refer [<! put!]]
+    [client.channels :refer [add-todo-channel todo-input-channel filter-todos-channel all-todos-channel]]
+    [client.state :refer [filter-todos-by input-atom todos]]
+    [clojure.string :refer [blank?]]))
 
-(defonce input-atom (reagent/atom ""))
-(defonce filter-todos-by (reagent/atom "all"))
+(defn change-filter [filter-by-status]
+  (put! filter-todos-channel filter-by-status))
 
-(defn on-del-btn-clicked [state todo-id]
-  (go
-    (let
-      [res (<! (http/delete (str "http://localhost:4000/todos/" todo-id)))]
-      (del-todo state (:body res)))))
-
-(defn show-done-todos [] (swap! filter-todos-by (fn [] "done")))
-(defn show-to-do-todos [] (swap! filter-todos-by (fn [] "to-do")))
-(defn show-all-todos [] (swap! filter-todos-by (fn [] "all")))
-
-(defn on-add-btn-clicked [state todo-name]
+(defn on-add-btn-clicked [todo-name]
   (go
     (let
       [res (<! (http/post "http://localhost:4000/todos" {:json-params {:todo-name todo-name}}))]
-      (add-todo state (js->clj (:body res))))))
+      (put! add-todo-channel res))))
 
-(defn on-input-change [input-atom evt] (swap! input-atom (fn [old-val] (-> evt .-target .-value))))
+(defn on-input-change [input-atom evt]
+  (put! todo-input-channel (-> evt .-target .-value)))
 
-(defn app [given-state]
-  (fn [given-state]
-    (let [partial-todos (partial todos on-del-btn-clicked)]
+(defn app []
+  (fn []
+    (http/get "http://localhost:4000/todos" {:channel all-todos-channel})
+    (fn []
       [:div [:p @filter-todos-by " " "todos"]
        [:div
-        [:button {:on-click show-all-todos} [:span "all"]]
-        [:button {:on-click show-done-todos} [:span "done"]]
-        [:button {:on-click show-to-do-todos} [:span "to-do"]]]
+        [:button {:on-click #(change-filter "all")} [:span "all"]]
+        [:button {:on-click #(change-filter "done")} [:span "done"]]
+        [:button {:on-click #(change-filter "to-do")} [:span "to-do"]]]
        [:ul (case @filter-todos-by
-              "done" (partial-todos given-state (filter (fn [todo] (:is-done todo)) @given-state))
-              "all" (partial-todos given-state @given-state)
-              "to-do" (partial-todos given-state (filter (fn [todo] (not (:is-done todo))) @given-state))
-              (partial-todos given-state @given-state))
+              "done" (generate-todos (filter (fn [todo] (:is-done todo)) @todos))
+              "all" (generate-todos @todos)
+              "to-do" (generate-todos (filter (fn [todo] (not (:is-done todo))) @todos))
+              (generate-todos @todos))
         ]
        [:div
         [:span "add todo:"]
         [:input {:on-change #(on-input-change input-atom %)}]
-        [:button {:disabled (blank? @input-atom) :on-click #(on-add-btn-clicked given-state @input-atom)}
+        [:button {:disabled (blank? @input-atom) :on-click #(on-add-btn-clicked @input-atom)}
          [:span "add"]]]])))

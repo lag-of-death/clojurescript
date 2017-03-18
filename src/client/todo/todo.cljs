@@ -1,16 +1,18 @@
 (ns client.todo.todo
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-    [shared.core :refer [mark-todo-as-done]]
     [cljs-http.client :as http]
-    [cljs.core.async :refer [<!]]
+    [client.channels :refer [done-todo-channel]]
+    [cljs.core.async :refer [<! put!]]
     [client.todo.button :refer [button]]))
 
-(defn on-click [todo todos]
+(defn on-click [todo]
   (go (let [res (<! (http/post (str "http://localhost:4000/todos/" (:id todo))))]
-        (mark-todo-as-done todos (:body res)))))
+        (put! done-todo-channel res))))
 
-(def todo
-  (fn [on-delete todos value]
-    (let [button (button (partial on-delete (:id value)))]
-      ^{:key (:id value)} [:li {:style {:text-decoration (if (:is-done value) "line-through" "none")} :on-click #(on-click value todos)} (:name value) button])))
+(def generate-todo
+  (fn [todo-data]
+    ^{:key (:id todo-data)} [:li {:style    {:text-decoration (if (:is-done todo-data) "line-through" "none")}
+                                  :on-click #(on-click todo-data)}
+                             (:name todo-data)
+                             [button (:id todo-data)]]))
