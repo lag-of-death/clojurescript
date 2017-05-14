@@ -4,10 +4,13 @@
     [cljs.nodejs :as nodejs]))
 
 (defonce express (nodejs/require "express"))
+
 (defonce body-parser (nodejs/require "body-parser"))
 
-(def todos (atom [{:name "Learn ClojureScript" :is-done false :id 0}
-                  {:name "Write a great app in ClojureScript" :is-done false :id 1}]))
+(def todos
+  (atom
+    [{:name "Learn ClojureScript" :is-done false :id 0}
+     {:name "Write a great app in ClojureScript" :is-done false :id 1}]))
 
 (defn get-id [req]
   (-> (.-params req)
@@ -24,14 +27,15 @@
 (defn -main [& args]
   (let [app (express)]
 
-    (.use app (body-parser))
+    (.use app
+          (body-parser))
 
-    (.use app (.static express "resources/public"))
+    (.use app
+          (.static express "resources/public"))
 
     (.get app "/todos"
           (fn [req res]
-            (->> (clj->js @todos)
-                 (.json res))))
+            (.json res (clj->js @todos))))
 
     (.post app "/todos"
            (fn [req res]

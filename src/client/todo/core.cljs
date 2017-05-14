@@ -36,9 +36,9 @@
           [:button {:on-click #(change-filter "done")} [:span "done"]]
           [:button {:on-click #(change-filter "to-do")} [:span "to-do"]]]
          [:ul (case (:filter-todos-by app-state)
-                "done" (generate-todos (filter (fn [todo] (:is-done todo)) (:todos app-state)))
+                "done" (generate-todos (filter :is-done (:todos app-state)))
                 "all" (generate-todos (:todos app-state))
-                "to-do" (generate-todos (filter (fn [todo] (not (:is-done todo))) (:todos app-state)))
+                "to-do" (generate-todos (remove :is-done (:todos app-state)))
                 (generate-todos (:todos app-state)))
           ]
          [:div
