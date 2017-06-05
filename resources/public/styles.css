@@ -1,0 +1,36 @@
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+#app {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+main {
+    margin-top: 10px;
+    height: 40%;
+    display: flex;
+    justify-content: space-around;
+    box-shadow: 10px 10px 3px #888888;
+    border: 2px solid black;
+    border-radius: 4px;
+    padding: 8px;
+}
+
+@media only screen and (min-width: 480px) {
+    main {
+        width: 60%;
+    }
+}
+
+button {
+    margin: 2px;
+    border: 2px solid black;
+}
+
+.todos {
+    overflow: auto;
+}
