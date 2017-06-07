@@ -33,9 +33,9 @@
         [:main {:class "main"}
          [:div {:style {:width "30%"}} [:p {:style {:text-align "center"}} (:filter-todos-by app-state) " " "todos"]
           [:div {:style {:display "flex" :flex-direction "column"}}
-           [:button {:on-click #(change-filter "all")} [:span "all"]]
-           [:button {:on-click #(change-filter "done")} [:span "done"]]
-           [:button {:on-click #(change-filter "to-do")} [:span "to-do"]]]]
+           [:button {:on-click #(change-filter "ALL")} [:span "all"]]
+           [:button {:on-click #(change-filter "DONE")} [:span "done"]]
+           [:button {:on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
                [:div {:style {:width           "50%"
                               :display         "flex"
                               :flex-direction  "column"
