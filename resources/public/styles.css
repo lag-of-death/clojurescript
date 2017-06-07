@@ -32,5 +32,6 @@ button {
 }
 
 .todos {
+    height: 80%;
     overflow: auto;
 }

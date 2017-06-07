@@ -36,18 +36,18 @@
            [:button {:on-click #(change-filter "ALL")} [:span "all"]]
            [:button {:on-click #(change-filter "DONE")} [:span "done"]]
            [:button {:on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
-               [:div {:style {:width           "50%"
+               [:div {:style {:width           "65%"
                               :display         "flex"
                               :flex-direction  "column"
                               :justify-content "space-between"}}
-                [:div {:class "todos"} [:ul (case (:filter-todos-by app-state)
-                                                  "DONE"                             (generate-todos (filter :is-done (:todos app-state)))
-                                                  "ALL"                              (generate-todos (:todos app-state))
-                                                  "TO-DO"                            (generate-todos (remove :is-done (:todos app-state)))
-                                                  (generate-todos (:todos app-state)))]]
-                [:div {:style {:display "flex" :flex-direction "column"}}
-                 [:span {:style {:text-align "center"}} "NEW TODO:"]
-                 [:input {:on-change #(on-input-change %)}]
+                [:div {:class "todos"} [:ul {:style {:padding 0}} (case (:filter-todos-by app-state)
+                                                                        "DONE"                             (generate-todos (filter :is-done (:todos app-state)))
+                                                                        "ALL"                              (generate-todos (:todos app-state))
+                                                                        "TO-DO"                            (generate-todos (remove :is-done (:todos app-state)))
+                                                                        (generate-todos (:todos app-state)))]]
+                [:div {:style {:display "flex" :justify-content "space-between"}}
+                 [:input {:style {:width "80%"} :on-change #(on-input-change %)}]
                  [:button {:disabled (blank? (:input app-state))
+                           :style    {:width "18%"}
                            :on-click #(on-add-btn-clicked (:input app-state))}
                   [:span "add"]]]]]))))
