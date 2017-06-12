@@ -14,13 +14,13 @@
 (def handle-click (partial handle-click-with-channel done-todo-channel))
 
 (def generate-todo-with-on-click
-  (fn [on-click-o todo-data]
+  (fn [on-click-handler todo-data]
     ^{:key (:id todo-data)} [:li {:style    {:display         "flex"
                                              :border-bottom   "1px dashed black"
                                              :justify-content "space-between"
                                              :padding         "2% 0%"
                                              :align-items     "center"}
-                                  :on-click #(on-click-o todo-data)}
+                                  :on-click #(on-click-handler todo-data)}
                              [:span {:style {:text-decoration (if (:is-done todo-data) "line-through" "none")}}
                               (:name todo-data)]
                              [button (:id todo-data)]]))
