@@ -15,13 +15,14 @@
 
 (def generate-todo-with-on-click
   (fn [on-click-handler todo-data]
-    ^{:key (:id todo-data)} [:li {:style    {:display         "flex"
-                                             :border-bottom   "1px dashed black"
-                                             :justify-content "space-between"
-                                             :padding         "2% 0%"
-                                             :align-items     "center"}
-                                  :on-click #(on-click-handler todo-data)}
-                             [:span {:style {:text-decoration (if (:is-done todo-data) "line-through" "none")}}
+    ^{:key (:id todo-data)} [:li
+                             {:class    "todo"
+                              :on-click #(on-click-handler todo-data)}
+                             [:span
+                              {:class
+                               (if (:is-done todo-data)
+                                 "todo__done-item"
+                                 "todo__new-item")}
                               (:name todo-data)]
                              [button (:id todo-data)]]))
 

@@ -30,24 +30,32 @@
     (http/get "http://localhost:4000/todos" {:channel all-todos-channel})
     (fn [state]
       (let [app-state @state]
-        [:main {:class "main"}
-         [:div {:style {:width "30%"}} [:p {:style {:text-align "center"}} (:filter-todos-by app-state) " " "todos"]
-          [:div {:style {:display "flex" :flex-direction "column"}}
-           [:button {:on-click #(change-filter "ALL")} [:span "all"]]
-           [:button {:on-click #(change-filter "DONE")} [:span "done"]]
-           [:button {:on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
-               [:div {:style {:width           "65%"
-                              :display         "flex"
-                              :flex-direction  "column"
-                              :justify-content "space-between"}}
-                [:div {:class "todos"} [:ul {:style {:padding 0}} (case (:filter-todos-by app-state)
-                                                                        "DONE"                             (generate-todos (filter :is-done (:todos app-state)))
-                                                                        "ALL"                              (generate-todos (:todos app-state))
-                                                                        "TO-DO"                            (generate-todos (remove :is-done (:todos app-state)))
-                                                                        (generate-todos (:todos app-state)))]]
-                [:div {:style {:display "flex" :justify-content "space-between"}}
-                 [:input {:style {:width "80%"} :on-change #(on-input-change %)}]
-                 [:button {:disabled (blank? (:input app-state))
-                           :style    {:width "18%"}
-                           :on-click #(on-add-btn-clicked (:input app-state))}
-                  [:span "add"]]]]]))))
+        [:main
+         {:class "main"}
+         [:div
+          {:class "menu"}
+          [:p {:class "menu__current-tab"} (:filter-todos-by app-state) " " "todos"]
+          [:div
+           {:class "menu__buttons"}
+           [:button {:class "button" :on-click #(change-filter "ALL")} [:span "all"]]
+           [:button {:class "button" :on-click #(change-filter "DONE")} [:span "done"]]
+           [:button {:class "button" :on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
+         [:div
+          {:class "todos-container"}
+          [:div
+           {:class "todos"}
+           [:ul
+            {:class "todos__list"}
+            (case (:filter-todos-by app-state)
+              "DONE"   (generate-todos (filter :is-done (:todos app-state)))
+              "ALL"    (generate-todos (:todos app-state))
+              "TO-DO"  (generate-todos (remove :is-done (:todos app-state)))
+              (generate-todos (:todos app-state)))]]
+          [:div
+           {:class "add-area"}
+           [:input {:class "input" :on-change #(on-input-change %)}]
+           [:button
+            {:disabled (blank? (:input app-state))
+             :class    "button button--adder"
+             :on-click #(on-add-btn-clicked (:input app-state))}
+            [:span "add"]]]]]))))
