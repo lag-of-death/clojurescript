@@ -8,16 +8,15 @@
 
 (defn handle-click-with-channel [channel todo]
   (go
-    (let [res (<! (http/post (str "http://localhost:4000/todos/" (:id todo))))]
-      (put! channel res))))
+   (let [res (<! (http/post (str "http://localhost:4000/todos/" (:id todo))))]
+     (put! channel res))))
 
 (def handle-click (partial handle-click-with-channel done-todo-channel))
 
 (def generate-todo-with-on-click
   (fn [on-click-handler todo-data]
-    ^{:key (:id todo-data)} [:li
-                             {:class    "todo"
-                              :on-click #(on-click-handler todo-data)}
+    ^{:key (:id todo-data)} [:li.todo
+                             {:on-click #(on-click-handler todo-data)}
                              [:span
                               {:class
                                (if (:is-done todo-data)
