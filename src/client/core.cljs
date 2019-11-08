@@ -1,6 +1,7 @@
 (ns client.core
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+    [cljs-http.client :as http]
     [taoensso.sente :as sente
      :refer             (cb-success?)]
     [client.state.changes :refer [create-store]]
@@ -20,6 +21,8 @@
   (def chsk-state state))
 
 
+(http/get "http://localhost:4000/login")
+
 (js/setTimeout
  (fn []
    (chsk-send!
@@ -29,5 +32,5 @@
       (if (sente/cb-success? reply)
         (js/console.log reply)
         (js/console.log reply)))))
- 6000)
+ 4000)
 

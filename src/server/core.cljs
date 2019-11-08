@@ -14,9 +14,7 @@
 (def express (nodejs/require "express"))
 (def express-ws (nodejs/require "express-ws"))
 (def ws (nodejs/require "ws"))
-(def cookie-parser (nodejs/require "cookie-parser"))
 (def body-parser (nodejs/require "body-parser"))
-(def csurf (nodejs/require "csurf"))
 (def session (nodejs/require "express-session"))
 
 (let [packer :edn
@@ -28,12 +26,22 @@
       (sente-express/make-express-channel-socket-server!
        {:packer        packer
         :csrf-token-fn nil
-        :user-id-fn    (fn [ring-req] 123)})]
+        :user-id-fn    (fn [ring-req] (aget (:body ring-req) "session" "uid"))})]
   (def ajax-post ajax-post-fn)
   (def ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
   (def ch-chsk ch-recv)
   (def chsk-send! send-fn)
   (def connected-uids connected-uids))
+
+
+(defn express-login-handler
+  [req res]
+  (let [req-session (aget req "session")
+        body        (aget req "body")
+        user-id     (aget body "user-id")]
+    (debugf "Login request: %s" user-id)
+    (aset req-session "uid" (.random js/Math))
+    (.send res "Success")))
 
 (def todos
   (atom
@@ -70,6 +78,12 @@
 
     (.use app
           (body-parser))
+
+    (.use app
+          (session
+           (clj->js {:saveUninitialized true :secret "abc 123", :name "express-session"})))
+
+    (.get app "/login" express-login-handler)
 
     (.use app
           (.static express "resources/public"))
@@ -128,6 +142,19 @@
              (debugf "Unhandled event: %s" event)
              (when ?reply-fn
                    (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
+
+
+(defmethod event-msg-handler :some/request-id
+           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           (let [body    (:body ring-req)
+                 session (aget body "session")
+                 uid     (aget session "uid")]
+             (js/console.log "id" id)
+             (js/console.log "session" session)
+             (js/console.log "uid" uid)
+             (debugf "event for btn1: %s " event)
+             (when ?reply-fn
+                   (?reply-fn {:hello (:ws @connected-uids)}))))
 
 (defonce router_ (atom nil))
 
