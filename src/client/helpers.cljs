@@ -1,3 +1,3 @@
 (ns client.helpers)
 
-(defn greet-visitor [] "Hello world!")
+(defn greet-visitor [] "Hello world!22")
