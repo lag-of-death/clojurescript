@@ -17,7 +17,7 @@
 (defn on-add-btn-clicked-with-channel [channel todo-name]
   (go
    (let [res (<!
-              (http/post "http://localhost:4000/todos" {:json-params {:todo-name todo-name}}))]
+              (http/post "/todos" {:json-params {:todo-name todo-name}}))]
      (put! channel res))))
 
 (def on-add-btn-clicked (partial on-add-btn-clicked-with-channel add-todo-channel))

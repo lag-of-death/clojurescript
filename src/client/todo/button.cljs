@@ -7,7 +7,7 @@
 
 (defn handle-del-btn-clicked-with-channel [channel todo-id]
   (go
-   (let [res (<! (http/delete (str "http://localhost:4000/todos/" todo-id)))]
+   (let [res (<! (http/delete (str "/todos/" todo-id)))]
      (put! channel res))))
 
 (def handle-del-btn-clicked

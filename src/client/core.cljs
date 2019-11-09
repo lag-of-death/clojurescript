@@ -25,7 +25,7 @@
   (def chsk-state state))
 
 
-(http/get "http://localhost:4000/login")
+(http/get "/login")
 
 (defn callback [reply] (put! all-todos-channel (:todos reply)))
 

@@ -10,6 +10,9 @@
     "express-ws": "^4.0.0",
     "ws": "^7.2.0"
   },
+  "engines": {
+    "node": ">=10.15.3"
+  },
   "devDependencies": {
     "nodemon": "^1.11.0",
     "phantomjs": "^2.1.7"
@@ -18,7 +21,7 @@
     "try": "npm run build && npm test",
     "repl": "lein trampoline cljsbuild repl-rhino",
     "build": "lein cljsbuild once client && lein cljsbuild once server",
-    "start": "nodemon resources/server/index.js",
+    "start": "PORT=4000 nodemon resources/server/index.js",
     "test": "lein doo phantom test once"
   },
   "keywords": [],

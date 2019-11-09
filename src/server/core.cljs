@@ -110,7 +110,8 @@
 
 (defn -main [& args]
   (let [app (express)
-        _   (express-ws app)]
+        _   (express-ws app)
+        port (.-PORT (.-env cljs.nodejs/process))]
 
     (.use app
           (body-parser))
@@ -164,7 +165,7 @@
             (js/console.warn "Unhandled request: %s" (.-originalUrl req))
             (next)))
 
-    (.listen app 4000)))
+    (.listen app (if port port 4000))))
 
 
 (set! *main-cli-fn* -main)

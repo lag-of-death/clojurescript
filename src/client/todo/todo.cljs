@@ -8,7 +8,7 @@
 
 (defn handle-click-with-channel [channel todo]
   (go
-   (let [res (<! (http/post (str "http://localhost:4000/todos/" (:id todo))))]
+   (let [res (<! (http/post (str "/todos/" (:id todo))))]
      (put! channel res))))
 
 (def handle-click (partial handle-click-with-channel done-todo-channel))
