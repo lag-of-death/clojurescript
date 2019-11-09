@@ -1,12 +1,9 @@
-FROM circleci/clojure:lein-2.7.1
-
-RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-RUN sudo apt-get install nodejs
+FROM theasp/clojurescript-nodejs:latest
 
 COPY . .
 
-RUN npm ci
-RUN sudo npm run build
+RUN npm ci --production
+RUN npm run build
 
 EXPOSE 4000
 
