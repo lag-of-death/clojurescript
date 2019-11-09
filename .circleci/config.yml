@@ -1,4 +1,6 @@
 version: 2
+orbs:
+  heroku: circleci/heroku@1.0.0
 jobs:
   build:
     docker:
@@ -10,3 +12,20 @@ jobs:
       - run: sudo apt-get install nodejs
       - run: npm ci
       - run: npm test
+
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git:
+          only-branch: master
+
+workflows:
+  version: 2
+  build-test-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
