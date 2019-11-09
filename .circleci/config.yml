@@ -1,6 +1,4 @@
 version: 2
-orbs:
-  heroku: circleci/heroku@1.0.0
 jobs:
   build:
     docker:
@@ -14,12 +12,11 @@ jobs:
       - run: npm test
 
   deploy:
-    executor: heroku/default
     steps:
-      - checkout
-      - heroku/install
-      - heroku/deploy-via-git:
-          only-branch: master
+      - run:
+          name: Deploy Master to Heroku
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 
 workflows:
   version: 2
