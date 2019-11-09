@@ -72,6 +72,42 @@
         (.post "/chsk" ajax-post)))
 
 
+(defmulti event-msg-handler
+  "Multimethod to handle Sente `event-msg`s"
+  :id)
+
+(defmethod event-msg-handler :default
+           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           (let [session (:session ring-req)
+                 uid     (:uid session)]
+             (debugf "Unhandled event: %s" event)
+             (when ?reply-fn
+                   (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
+
+
+(defmethod event-msg-handler :todos/get-all
+           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           (let [body    (:body ring-req)
+                 session (aget body "session")
+                 uid     (aget session "uid")]
+             (js/console.log "id" id)
+             (js/console.log "?data" ?data)
+             (js/console.log "session" session)
+             (js/console.log "uid" uid)
+             (debugf "event for btn1: %s " event)
+             (when ?reply-fn
+                   (?reply-fn {:hello (:ws @connected-uids) :todos @todos}))))
+
+(defonce router_ (atom nil))
+
+(defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
+(defn start-router! []
+  (stop-router!)
+  (reset! router_
+          (sente/start-server-chsk-router!
+           ch-chsk event-msg-handler)))
+
+
 (defn -main [& args]
   (let [app (express)
         _   (express-ws app)]
@@ -130,40 +166,5 @@
 
     (.listen app 4000)))
 
-
-(defmulti event-msg-handler
-  "Multimethod to handle Sente `event-msg`s"
-  :id)
-
-(defmethod event-msg-handler :default
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [session (:session ring-req)
-                 uid     (:uid session)]
-             (debugf "Unhandled event: %s" event)
-             (when ?reply-fn
-                   (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
-
-
-(defmethod event-msg-handler :todos/get-all
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [body    (:body ring-req)
-                 session (aget body "session")
-                 uid     (aget session "uid")]
-             (js/console.log "id" id)
-             (js/console.log "?data" ?data)
-             (js/console.log "session" session)
-             (js/console.log "uid" uid)
-             (debugf "event for btn1: %s " event)
-             (when ?reply-fn
-                   (?reply-fn {:hello (:ws @connected-uids) :todos @todos}))))
-
-(defonce router_ (atom nil))
-
-(defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
-(defn start-router! []
-  (stop-router!)
-  (reset! router_
-          (sente/start-server-chsk-router!
-           ch-chsk event-msg-handler)))
 
 (set! *main-cli-fn* -main)
