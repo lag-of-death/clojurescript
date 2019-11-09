@@ -1,5 +1,7 @@
 FROM theasp/clojurescript-nodejs:latest
 
+WORKDIR /usr/src/app
+
 COPY . .
 
 RUN npm ci --production
