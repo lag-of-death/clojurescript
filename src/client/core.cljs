@@ -4,7 +4,7 @@
     [cljs-http.client :as http]
     [taoensso.sente :as sente
      :refer             (cb-success?)]
-    [client.state.changes :refer [create-store]]
+    [client.state_changes :refer [create-store]]
     [client.todo.core :as todo]
     [client.state :refer [state]]
     [cljs.core.async :refer [put!]]
@@ -27,6 +27,8 @@
 
 (http/get "http://localhost:4000/login")
 
+(defn callback [reply] (put! all-todos-channel (:todos reply)))
+
 (js/setTimeout
  (fn []
    (chsk-send!
@@ -38,4 +40,3 @@
         (js/console.error reply)))))
  500)
 
-(defn callback [reply] (put! all-todos-channel (:todos reply)))

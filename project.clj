@@ -38,11 +38,12 @@
     {:id           "client"
      :source-paths ["src"]
 
-     :compiler     {:main                 client.core
-                    :asset-path           "js/compiled/out"
-                    :output-to            "resources/public/js/compiled/client.js"
-                    :output-dir           "resources/public/js/compiled/out"
-                    :source-map-timestamp true}}
+     :compiler     {:main       client.core
+                    :asset-path "js/compiled/out"
+                    :output-to  "resources/public/js/compiled/client.js"
+                    :output-dir "resources/public/js/compiled/out"
+                    :compiler   {:optimizations :none
+                                 :source-map    true}}}
     {:id           "test"
      :source-paths ["src" "test"]
      :compiler     {:main          tests

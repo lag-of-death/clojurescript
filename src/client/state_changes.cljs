@@ -1,4 +1,4 @@
-(ns client.state.changes
+(ns client.state_changes
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [cljs.core.async :refer [<!]]
