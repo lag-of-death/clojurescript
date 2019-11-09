@@ -8,7 +8,7 @@
 (defn create-store [state]
   (go
    (let [res (<! channels/all-todos-channel)]
-     (swap! state assoc-in [:todos] (:body res))))
+     (swap! state assoc-in [:todos] res)))
 
   (go
    (while true

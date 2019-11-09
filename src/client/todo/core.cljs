@@ -29,7 +29,6 @@
 
 (defn app [state]
   (let []
-    (http/get "http://localhost:4000/todos" {:channel all-todos-channel})
     (fn [state]
       (let [app-state @state]
         [:main.main

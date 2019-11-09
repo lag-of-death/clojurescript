@@ -7,6 +7,10 @@
     [client.state.changes :refer [create-store]]
     [client.todo.core :as todo]
     [client.state :refer [state]]
+    [cljs.core.async :refer [put!]]
+    [client.channels
+     :refer
+     [all-todos-channel]]
     [reagent.core :as reagent]))
 
 
@@ -26,11 +30,12 @@
 (js/setTimeout
  (fn []
    (chsk-send!
-    [:some/request-id {:name "Rich Hickey" :type "Awesome"}]
+    [:todos/get-all]
     8000
     (fn [reply]
       (if (sente/cb-success? reply)
-        (js/console.log reply)
-        (js/console.log reply)))))
- 4000)
+        (callback reply)
+        (js/console.error reply)))))
+ 500)
 
+(defn callback [reply] (put! all-todos-channel (:todos reply)))

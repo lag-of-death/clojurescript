@@ -144,17 +144,18 @@
                    (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
 
 
-(defmethod event-msg-handler :some/request-id
+(defmethod event-msg-handler :todos/get-all
            [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
            (let [body    (:body ring-req)
                  session (aget body "session")
                  uid     (aget session "uid")]
              (js/console.log "id" id)
+             (js/console.log "?data" ?data)
              (js/console.log "session" session)
              (js/console.log "uid" uid)
              (debugf "event for btn1: %s " event)
              (when ?reply-fn
-                   (?reply-fn {:hello (:ws @connected-uids)}))))
+                   (?reply-fn {:hello (:ws @connected-uids) :todos @todos}))))
 
 (defonce router_ (atom nil))
 
