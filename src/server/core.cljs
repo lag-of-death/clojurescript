@@ -107,6 +107,18 @@
              (when ?reply-fn
                    (?reply-fn {:hello (:ws @connected-uids) :body (del-todo todos id)}))))
 
+
+(defmethod event-msg-handler :todos/add
+           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           (let [body           (:body ring-req)
+                 todo-name      (aget (clj->js ?data) "todo-name")]
+             (when ?reply-fn
+                   (?reply-fn
+                    {:hello (:ws @connected-uids)
+                     :body  (->> todo-name
+                                 (gen-next-todo todos))}))))
+
+
 (defonce router_ (atom nil))
 
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
@@ -138,16 +150,6 @@
 
     (.use app
           (.static express "resources/public"))
-
-    (.post app "/todos"
-           (fn [req res]
-             (->> req
-                  (.-body)
-                  (js->clj)
-                  (#(get % "todo-name"))
-                  (gen-next-todo todos)
-                  (clj->js)
-                  (.json res))))
 
     (add-sente-routes app)
 
