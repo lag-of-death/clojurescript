@@ -75,7 +75,7 @@
             (js/console.warn "Unhandled request: %s" (.-originalUrl req))
             (next)))
 
-    (.listen app (if port port 4000))))
+    (.listen app (or port 4000))))
 
 
 (set! *main-cli-fn* -main)
