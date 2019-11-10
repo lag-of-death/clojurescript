@@ -90,13 +90,15 @@
            (let [body    (:body ring-req)
                  session (aget body "session")
                  uid     (aget session "uid")]
-             (js/console.log "id" id)
-             (js/console.log "?data" ?data)
-             (js/console.log "session" session)
-             (js/console.log "uid" uid)
-             (debugf "event for btn1: %s " event)
              (when ?reply-fn
                    (?reply-fn {:hello (:ws @connected-uids) :todos @todos}))))
+
+(defmethod event-msg-handler :todos/mark-as-done
+           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           (let [body    (:body ring-req)
+                 id      (aget (clj->js ?data) "id")]
+             (when ?reply-fn
+                   (?reply-fn {:hello (:ws @connected-uids) :body (mark-as-done id)}))))
 
 (defonce router_ (atom nil))
 
@@ -107,10 +109,15 @@
           (sente/start-server-chsk-router!
            ch-chsk event-msg-handler)))
 
+(defn mark-as-done [id]
+  (->> id
+       (#(filter (fn [todo] (= (:id todo) %)) @todos))
+       (first)
+       (mark-todo todos)))
 
 (defn -main [& args]
-  (let [app (express)
-        _   (express-ws app)
+  (let [app  (express)
+        _    (express-ws app)
         port (.-PORT (.-env cljs.nodejs/process))]
 
     (.use app
@@ -125,10 +132,6 @@
     (.use app
           (.static express "resources/public"))
 
-    (.get app "/todos"
-          (fn [req res]
-            (.json res (clj->js @todos))))
-
     (.post app "/todos"
            (fn [req res]
              (->> req
@@ -136,16 +139,6 @@
                   (js->clj)
                   (#(get % "todo-name"))
                   (gen-next-todo todos)
-                  (clj->js)
-                  (.json res))))
-
-    (.post app "/todos/:id"
-           (fn [req res]
-             (->> req
-                  (get-id)
-                  (#(filter (fn [todo] (= (:id todo) %)) @todos))
-                  (first)
-                  (mark-todo todos)
                   (clj->js)
                   (.json res))))
 
