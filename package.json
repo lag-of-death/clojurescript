@@ -14,6 +14,7 @@
     "node": ">=10.15.3"
   },
   "devDependencies": {
+    "clj-kondo": "^2019.10.11-alpha.1",
     "nodemon": "^1.11.0",
     "phantomjs": "^2.1.7"
   },
@@ -22,7 +23,8 @@
     "repl": "lein trampoline cljsbuild repl-rhino",
     "build": "lein cljsbuild once client && lein cljsbuild once server",
     "start": "PORT=4000 nodemon resources/server/index.js",
-    "test": "lein doo phantom test once"
+    "test": "lein doo phantom test once",
+    "lint": "clj-kondo --lint src && clj-kondo --lint test"
   },
   "keywords": [],
   "author": "",

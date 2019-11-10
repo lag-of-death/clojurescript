@@ -9,10 +9,8 @@ jobs:
       - run: curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
       - run: sudo apt-get install nodejs
       - run: npm ci
-      - run: npm i -g clj-kondo
       - run: npm test
-      - run: clj-kondo --lint test
-      - run: clj-kondo --lint src
+      - run: npm run lint
 
   deploy:
     docker:
