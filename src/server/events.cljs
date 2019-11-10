@@ -11,10 +11,8 @@
 
 (defmethod event-msg-handler :default
            [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [session (:session ring-req)
-                 uid     (:uid session)]
-             (when ?reply-fn
-                   (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
+           (when ?reply-fn
+                 (?reply-fn {:umatched-event-as-echoed-from-from-server event})))
 
 
 (defmethod event-msg-handler :todos/get-all
