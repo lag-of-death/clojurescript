@@ -6,12 +6,9 @@
      :refer             (cb-success?)]
     [client.state_changes :refer [create-store]]
     [client.todo.core :as todo]
-    [client.state :refer [state]]
+    [client.domain :refer [state all-todos-channel]]
     [cljs.core.async :refer [put!]]
     [client.comms :refer [chsk-send!]]
-    [client.channels
-     :refer
-     [all-todos-channel]]
     [reagent.core :as reagent]))
 
 

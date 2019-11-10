@@ -1,4 +1,4 @@
-(ns shared.core)
+(ns shared.domain)
 
 (def filter-out-todo
   (fn [old-todos id]

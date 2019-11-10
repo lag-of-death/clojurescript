@@ -6,7 +6,7 @@
      :refer             (cb-success?)]
     [client.comms :refer [chsk-send!]]
     [cljs.core.async :refer [put! <!]]
-    [client.channels :refer [del-todo-channel]]))
+    [client.domain :refer [del-todo-channel]]))
 
 
 (defn handle-del-btn-clicked-with-channel [channel id]
@@ -24,5 +24,4 @@
 (defn del-button [on-click todo-id]
   [:button.button {:on-click #(on-click todo-id)} "x"])
 
-(defn button
-  ([todo-id] (del-button handle-del-btn-clicked todo-id)))
+(defn button [todo-id] (del-button handle-del-btn-clicked todo-id))

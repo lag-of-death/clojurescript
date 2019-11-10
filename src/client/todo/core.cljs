@@ -7,7 +7,7 @@
      :refer             (cb-success?)]
     [client.comms :refer [chsk-send!]]
     [cljs.core.async :refer [<! put!]]
-    [client.channels
+    [client.domain
      :refer
      [add-todo-channel todo-input-channel filter-todos-channel all-todos-channel]]
     [clojure.string :refer [blank?]]))

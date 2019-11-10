@@ -2,8 +2,8 @@
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [cljs.core.async :refer [<!]]
-    [client.channels :as channels]
-    [shared.core :as shared]))
+    [client.domain :as channels]
+    [shared.domain :as shared]))
 
 (defn create-store [state]
   (go

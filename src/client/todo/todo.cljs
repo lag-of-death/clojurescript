@@ -5,7 +5,7 @@
     [taoensso.sente :as sente
      :refer             (cb-success?)]
     [cljs-http.client :as http]
-    [client.channels :refer [done-todo-channel]]
+    [client.domain :refer [done-todo-channel]]
     [cljs.core.async :refer [<! put!]]
     [client.todo.button :refer [button]]))
 

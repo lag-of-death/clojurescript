@@ -1,6 +1,7 @@
 (ns server.core
   (:require
-    [server.helpers :refer [del-todo add-todo mark-todo]]
+    [server.domain :refer [todos del-todo add-todo mark-todo]]
+    [server.helpers :refer [get-random-id]]
     [taoensso.encore :as encore
      :refer              ()]
     [taoensso.timbre
@@ -9,7 +10,6 @@
     [taoensso.sente :as sente]
     [taoensso.sente.server-adapters.express :as sente-express]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
-    [server.state :refer [router_ todos]]
     [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
 
@@ -26,7 +26,7 @@
         body        (aget req "body")
         user-id     (aget body "user-id")]
     (debugf "Login request: %s" user-id)
-    (aset req-session "uid" (.random js/Math))
+    (aset req-session "uid" (get-random-id))
     (.send res "Success")))
 
 (defn add-sente-routes [express-app]
@@ -39,6 +39,8 @@
 
         (.get "/chsk" ajax-get-or-ws-handshake)
         (.post "/chsk" ajax-post)))
+
+(defonce router_ (atom nil))
 
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []

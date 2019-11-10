@@ -1,9 +1,7 @@
 (ns server.events
   (:require
-    [server.state :refer [todos]]
     [server.comms :refer [connected-uids]]
-    [server.helpers :refer [mark-as-done del-todo gen-next-todo]]))
-
+    [server.domain :refer [todos mark-as-done del-todo gen-next-todo]]))
 
 (defmulti event-msg-handler
   "Multimethod to handle Sente `event-msg`s"

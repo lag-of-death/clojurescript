@@ -1,6 +1,14 @@
-(ns client.channels
+(ns client.domain
   (:require
+    [reagent.core :as reagent]
     [cljs.core.async :refer [chan]]))
+
+(defonce state
+  (reagent/atom
+    {:todos           []
+     :input           ""
+     :filter-todos-by "all"}))
+
 
 (def all-todos-channel (chan))
 (def done-todo-channel (chan))
