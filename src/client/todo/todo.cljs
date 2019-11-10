@@ -1,12 +1,9 @@
 (ns client.todo.todo
-  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [client.comms :refer [chsk-send!]]
-    [taoensso.sente :as sente
-     :refer             (cb-success?)]
-    [cljs-http.client :as http]
+    [taoensso.sente :as sente]
     [client.domain :refer [done-todo-channel]]
-    [cljs.core.async :refer [<! put!]]
+    [cljs.core.async :refer [put!]]
     [client.todo.button :refer [button]]))
 
 (defn handle-click-with-channel [channel todo]

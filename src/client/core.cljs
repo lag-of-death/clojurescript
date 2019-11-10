@@ -1,9 +1,7 @@
 (ns client.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [cljs-http.client :as http]
-    [taoensso.sente :as sente
-     :refer             (cb-success?)]
+    [taoensso.sente :as sente]
     [client.state_changes :refer [create-store]]
     [client.todo.core :as todo]
     [client.domain :refer [state all-todos-channel]]

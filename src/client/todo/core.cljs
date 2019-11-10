@@ -1,15 +1,12 @@
 (ns client.todo.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
-    [cljs-http.client :as http]
     [client.todo.todos :refer [generate-todos]]
-    [taoensso.sente :as sente
-     :refer             (cb-success?)]
+    [taoensso.sente :as sente]
     [client.comms :refer [chsk-send!]]
-    [cljs.core.async :refer [<! put!]]
+    [cljs.core.async :refer [put!]]
     [client.domain
      :refer
-     [add-todo-channel todo-input-channel filter-todos-channel all-todos-channel]]
+     [add-todo-channel todo-input-channel filter-todos-channel]]
     [clojure.string :refer [blank?]]))
 
 (defn change-filter-with-channel [channel filter-by-status]
@@ -34,27 +31,25 @@
 (def on-input-change (partial on-input-change-with-channel todo-input-channel))
 
 (defn app [state]
-  (let []
-    (fn [state]
-      (let [app-state @state]
-        [:main.main
-         [:div.menu
-          [:p.menu__current-tab (:filter-todos-by app-state) " " "todos"]
-          [:div.menu__buttons
-           [:button.button {:on-click #(change-filter "ALL")} [:span "all"]]
-           [:button.button {:on-click #(change-filter "DONE")} [:span "done"]]
-           [:button.button {:on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
-         [:div.todos-container
-          [:div.todos
-           [:ul.todos__list
-            (case (:filter-todos-by app-state)
-                  "DONE"   (generate-todos (filter :is-done (:todos app-state)))
-                  "ALL"    (generate-todos (:todos app-state))
-                  "TO-DO"  (generate-todos (remove :is-done (:todos app-state)))
-                  (generate-todos (:todos app-state)))]]
-          [:div.add-area
-           [:input.input {:on-change #(on-input-change %)}]
-           [:button.button.button--adder
-            {:disabled (blank? (:input app-state))
-             :on-click #(on-add-btn-clicked (:input app-state))}
-            [:span "add"]]]]]))))
+  (let [app-state @state]
+    [:main.main
+     [:div.menu
+      [:p.menu__current-tab (:filter-todos-by app-state) " " "todos"]
+      [:div.menu__buttons
+       [:button.button {:on-click #(change-filter "ALL")} [:span "all"]]
+       [:button.button {:on-click #(change-filter "DONE")} [:span "done"]]
+       [:button.button {:on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
+     [:div.todos-container
+      [:div.todos
+       [:ul.todos__list
+        (case (:filter-todos-by app-state)
+              "DONE"   (generate-todos (filter :is-done (:todos app-state)))
+              "ALL"    (generate-todos (:todos app-state))
+              "TO-DO"  (generate-todos (remove :is-done (:todos app-state)))
+              (generate-todos (:todos app-state)))]]
+      [:div.add-area
+       [:input.input {:on-change #(on-input-change %)}]
+       [:button.button.button--adder
+        {:disabled (blank? (:input app-state))
+         :on-click #(on-add-btn-clicked (:input app-state))}
+        [:span "add"]]]]]))

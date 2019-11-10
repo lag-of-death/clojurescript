@@ -8,38 +8,35 @@
   :id)
 
 (defmethod event-msg-handler :default
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           [{:keys [event ?reply-fn]}]
            (when ?reply-fn
                  (?reply-fn {:umatched-event-as-echoed-from-from-server event})))
 
 
 (defmethod event-msg-handler :todos/get-all
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           [{:keys [ring-req ?reply-fn]}]
            (let [body    (:body ring-req)
                  session (aget body "session")
                  uid     (aget session "uid")]
              (when ?reply-fn
-                   (?reply-fn {:connected-uids (:ws @connected-uids) :todos @todos}))))
+                   (?reply-fn {:uid uid :connected-uids (:ws @connected-uids) :todos @todos}))))
 
 (defmethod event-msg-handler :todos/mark-as-done
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [body    (:body ring-req)
-                 id      (aget (clj->js ?data) "id")]
+           [{:keys [?data ?reply-fn]}]
+           (let [id      (aget (clj->js ?data) "id")]
              (when ?reply-fn
                    (?reply-fn {:connected-uids (:ws @connected-uids) :body (mark-as-done id)}))))
 
 (defmethod event-msg-handler :todos/mark-as-deleted
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [body    (:body ring-req)
-                 id      (aget (clj->js ?data) "id")]
+           [{:keys [?data ?reply-fn]}]
+           (let [id      (aget (clj->js ?data) "id")]
              (when ?reply-fn
                    (?reply-fn {:connected-uids (:ws @connected-uids) :body (del-todo todos id)}))))
 
 
 (defmethod event-msg-handler :todos/add
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [body           (:body ring-req)
-                 todo-name      (aget (clj->js ?data) "todo-name")]
+           [{:keys [?data ?reply-fn]}]
+           (let [todo-name      (aget (clj->js ?data) "todo-name")]
              (when ?reply-fn
                    (?reply-fn
                     {:connected-uids (:ws @connected-uids)

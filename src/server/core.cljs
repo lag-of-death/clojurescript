@@ -1,14 +1,7 @@
 (ns server.core
   (:require
-    [server.domain :refer [todos del-todo add-todo mark-todo]]
     [server.helpers :refer [get-random-id]]
-    [taoensso.encore :as encore
-     :refer              ()]
-    [taoensso.timbre
-     :as           timbre
-     :refer-macros (tracef debugf infof warnf errorf)]
     [taoensso.sente :as sente]
-    [taoensso.sente.server-adapters.express :as sente-express]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
     [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
@@ -25,14 +18,14 @@
   (let [req-session (aget req "session")
         body        (aget req "body")
         user-id     (aget body "user-id")]
-    (debugf "Login request: %s" user-id)
+    (js/console.log "Login request: %s" user-id)
     (aset req-session "uid" (get-random-id))
     (.send res "Success")))
 
 (defn add-sente-routes [express-app]
   (doto express-app
         (.ws "/chsk"
-             (fn [ws req next]
+             (fn [ws req]
                (ajax-get-or-ws-handshake req nil nil
                                          {:websocket? true
                                           :websocket  ws})))
@@ -49,7 +42,7 @@
           (sente/start-server-chsk-router!
            ch-chsk event-msg-handler)))
 
-(defn -main [& args]
+(defn -main []
   (let [app  (express)
         _    (express-ws app)
         port (.-PORT (.-env cljs.nodejs/process))]
@@ -71,7 +64,7 @@
     (start-router!)
 
     (.use app
-          (fn [req res next]
+          (fn [req _res next]
             (js/console.warn "Unhandled request: %s" (.-originalUrl req))
             (next)))
 
