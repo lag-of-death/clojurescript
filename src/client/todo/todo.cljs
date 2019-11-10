@@ -14,7 +14,6 @@
    [:todos/mark-as-done {:id (:id todo)}]
    8000
    (fn [reply]
-     (js/console.log "bla" (:body reply))
      (if (sente/cb-success? reply)
        (put! channel reply)
        (js/console.error reply)))))
@@ -24,9 +23,10 @@
 (def generate-todo-with-on-click
   (fn [on-click-handler todo-data]
     ^{:key (:id todo-data)} [:li.todo
-                             {:on-click #(on-click-handler todo-data)}
+                             {}
                              [:span
-                              {:class
+                              {:on-click #(on-click-handler todo-data)
+                               :class
                                (if (:is-done todo-data)
                                  "todo__done-item"
                                  "todo__new-item")}

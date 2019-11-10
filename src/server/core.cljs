@@ -100,6 +100,13 @@
              (when ?reply-fn
                    (?reply-fn {:hello (:ws @connected-uids) :body (mark-as-done id)}))))
 
+(defmethod event-msg-handler :todos/mark-as-deleted
+           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
+           (let [body    (:body ring-req)
+                 id      (aget (clj->js ?data) "id")]
+             (when ?reply-fn
+                   (?reply-fn {:hello (:ws @connected-uids) :body (del-todo todos id)}))))
+
 (defonce router_ (atom nil))
 
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
@@ -141,13 +148,6 @@
                   (gen-next-todo todos)
                   (clj->js)
                   (.json res))))
-
-    (.delete app "/todos/:id"
-             (fn [req res]
-               (->> req
-                    (get-id)
-                    (del-todo todos)
-                    (.json res))))
 
     (add-sente-routes app)
 
