@@ -8,6 +8,9 @@
      :refer-macros (tracef debugf infof warnf errorf)]
     [taoensso.sente :as sente]
     [taoensso.sente.server-adapters.express :as sente-express]
+    [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
+    [server.state :refer [router_ todos]]
+    [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
 
 (def http (nodejs/require "http"))
@@ -17,23 +20,6 @@
 (def body-parser (nodejs/require "body-parser"))
 (def session (nodejs/require "express-session"))
 
-(let [packer :edn
-      {:keys [ch-recv
-              send-fn
-              ajax-post-fn
-              ajax-get-or-ws-handshake-fn
-              connected-uids]}
-      (sente-express/make-express-channel-socket-server!
-       {:packer        packer
-        :csrf-token-fn nil
-        :user-id-fn    (fn [ring-req] (aget (:body ring-req) "session" "uid"))})]
-  (def ajax-post ajax-post-fn)
-  (def ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
-  (def ch-chsk ch-recv)
-  (def chsk-send! send-fn)
-  (def connected-uids connected-uids))
-
-
 (defn express-login-handler
   [req res]
   (let [req-session (aget req "session")
@@ -42,23 +28,6 @@
     (debugf "Login request: %s" user-id)
     (aset req-session "uid" (.random js/Math))
     (.send res "Success")))
-
-(def todos
-  (atom
-   [{:name "Learn ClojureScript" :is-done false :id 0}
-    {:name "Write a great app in ClojureScript" :is-done false :id 1}]))
-
-(defn get-id [req]
-  (-> (.-params req)
-      (js->clj)
-      (get "id")
-      (js/parseFloat)))
-
-(defn get-random-id [] (.random js/Math))
-
-(defn gen-next-todo [state todo-name]
-  (let [new-todo {:name todo-name :is-done false :id (get-random-id)}]
-    (add-todo state new-todo) new-todo))
 
 (defn add-sente-routes [express-app]
   (doto express-app
@@ -71,35 +40,6 @@
         (.get "/chsk" ajax-get-or-ws-handshake)
         (.post "/chsk" ajax-post)))
 
-
-(defmulti event-msg-handler
-  "Multimethod to handle Sente `event-msg`s"
-  :id)
-
-(defmethod event-msg-handler :default
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [session (:session ring-req)
-                 uid     (:uid session)]
-             (debugf "Unhandled event: %s" event)
-             (when ?reply-fn
-                   (?reply-fn {:umatched-event-as-echoed-from-from-server event}))))
-
-
-(defmethod event-msg-handler :todos/get-all
-           [{:as ev-msg :keys [event id ?data ring-req ?reply-fn send-fn]}]
-           (let [body    (:body ring-req)
-                 session (aget body "session")
-                 uid     (aget session "uid")]
-             (js/console.log "id" id)
-             (js/console.log "?data" ?data)
-             (js/console.log "session" session)
-             (js/console.log "uid" uid)
-             (debugf "event for btn1: %s " event)
-             (when ?reply-fn
-                   (?reply-fn {:hello (:ws @connected-uids) :todos @todos}))))
-
-(defonce router_ (atom nil))
-
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []
   (stop-router!)
@@ -107,10 +47,9 @@
           (sente/start-server-chsk-router!
            ch-chsk event-msg-handler)))
 
-
 (defn -main [& args]
-  (let [app (express)
-        _   (express-ws app)
+  (let [app  (express)
+        _    (express-ws app)
         port (.-PORT (.-env cljs.nodejs/process))]
 
     (.use app
@@ -124,37 +63,6 @@
 
     (.use app
           (.static express "resources/public"))
-
-    (.get app "/todos"
-          (fn [req res]
-            (.json res (clj->js @todos))))
-
-    (.post app "/todos"
-           (fn [req res]
-             (->> req
-                  (.-body)
-                  (js->clj)
-                  (#(get % "todo-name"))
-                  (gen-next-todo todos)
-                  (clj->js)
-                  (.json res))))
-
-    (.post app "/todos/:id"
-           (fn [req res]
-             (->> req
-                  (get-id)
-                  (#(filter (fn [todo] (= (:id todo) %)) @todos))
-                  (first)
-                  (mark-todo todos)
-                  (clj->js)
-                  (.json res))))
-
-    (.delete app "/todos/:id"
-             (fn [req res]
-               (->> req
-                    (get-id)
-                    (del-todo todos)
-                    (.json res))))
 
     (add-sente-routes app)
 

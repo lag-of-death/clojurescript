@@ -8,6 +8,7 @@
     [client.todo.core :as todo]
     [client.state :refer [state]]
     [cljs.core.async :refer [put!]]
+    [client.comms :refer [chsk-send!]]
     [client.channels
      :refer
      [all-todos-channel]]
@@ -15,15 +16,6 @@
 
 
 (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))
-
-(let [{:keys [chsk ch-recv send-fn state]}
-      (sente/make-channel-socket! "/chsk"
-                                  {:type :auto})]
-  (def chsk chsk)
-  (def ch-chsk ch-recv)
-  (def chsk-send! send-fn)
-  (def chsk-state state))
-
 
 (http/get "/login")
 
