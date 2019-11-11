@@ -1,5 +1,6 @@
 (ns client.core
   (:require
+    [client.events :refer [start-router!]]
     [cljs-http.client :as http]
     [taoensso.sente :as sente]
     [client.state_changes :refer [create-store]]
@@ -9,6 +10,8 @@
     [client.comms :refer [chsk-send!]]
     [reagent.core :as reagent]))
 
+
+(start-router!)
 
 (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))
 
