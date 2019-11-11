@@ -1,7 +1,7 @@
 (ns client.events
   (:require [taoensso.sente :as sente]
             [cljs.core.async :refer [put!]]
-            [client.domain :refer [done-todo-channel del-todo-channel]]
+            [client.domain :refer [add-todo-channel done-todo-channel del-todo-channel]]
             [client.comms :refer [ch-chsk]]))
 
 (defmulti event-msg-handler
@@ -18,9 +18,10 @@
            (let [data       (aget (clj->js ?data) "1")
                  body       (aget data "body")
                  event-name (aget (clj->js ?data) "0")]
-             (if (= event-name "deleted")
-               (put! del-todo-channel {:body body})
-               (put! done-todo-channel {:body body}))))
+             (case event-name
+                   "deleted"        (put! del-todo-channel {:body body})
+                   "marked-as-done" (put! done-todo-channel {:body body})
+                   "added"          (put! add-todo-channel body))))
 
 (defonce router_ (atom nil))
 

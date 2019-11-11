@@ -39,10 +39,12 @@
 
 
 (defmethod event-msg-handler :todos/add
-           [{:keys [?data ?reply-fn]}]
-           (let [todo-name      (aget (clj->js ?data) "todo-name")]
-             (when ?reply-fn
-                   (?reply-fn
-                    {:connected-uids (:ws @connected-uids)
-                     :body           (->> todo-name
-                                          (gen-next-todo todos))}))))
+           [{:keys [?data]}]
+
+           (let [todo-name      (aget (clj->js ?data) "todo-name")
+                 next-todo      (->> todo-name
+                                     (gen-next-todo todos))]
+
+             (doseq [uid (:any @connected-uids)]
+               (chsk-send! uid
+                           [:todos/added {:body next-todo}]))))

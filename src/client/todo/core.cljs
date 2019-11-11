@@ -1,12 +1,11 @@
 (ns client.todo.core
   (:require
     [client.todo.todos :refer [generate-todos]]
-    [taoensso.sente :as sente]
     [client.comms :refer [chsk-send!]]
     [cljs.core.async :refer [put!]]
     [client.domain
      :refer
-     [add-todo-channel todo-input-channel filter-todos-channel]]
+     [todo-input-channel filter-todos-channel]]
     [clojure.string :refer [blank?]]))
 
 (defn change-filter-with-channel [channel filter-by-status]
@@ -14,16 +13,11 @@
 
 (def change-filter (partial change-filter-with-channel filter-todos-channel))
 
-(defn on-add-btn-clicked-with-channel [channel todo-name]
+(defn on-add-btn-clicked-with-channel [todo-name]
   (chsk-send!
    [:todos/add {:todo-name todo-name}]
-   8000
-   (fn [reply]
-     (if (sente/cb-success? reply)
-       (put! channel reply)
-       (js/console.error reply)))))
+   8000))
 
-(def on-add-btn-clicked (partial on-add-btn-clicked-with-channel add-todo-channel))
 
 (defn on-input-change-with-channel [channel evt]
   (put! channel (-> evt .-target .-value)))
@@ -51,5 +45,5 @@
        [:input.input {:on-change #(on-input-change %)}]
        [:button.button.button--adder
         {:disabled (blank? (:input app-state))
-         :on-click #(on-add-btn-clicked (:input app-state))}
+         :on-click #(on-add-btn-clicked-with-channel (:input app-state))}
         [:span "add"]]]]]))

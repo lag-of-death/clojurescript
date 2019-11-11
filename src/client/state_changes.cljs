@@ -1,6 +1,7 @@
 (ns client.state_changes
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
+    [client.helpers :refer [to-keywords]]
     [cljs.core.async :refer [<!]]
     [client.domain :as channels]
     [shared.domain :as shared]))
@@ -25,7 +26,7 @@
   (go
    (while true
           (let [res (<! channels/add-todo-channel)]
-            (swap! state assoc-in [:todos] (cons (js->clj (:body res)) (:todos @state))))))
+            (swap! state assoc-in [:todos] (cons (to-keywords (js->clj res)) (:todos @state))))))
 
   (go
    (while true
