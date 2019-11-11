@@ -1,8 +1,11 @@
 (ns client.events
-  (:require [taoensso.sente :as sente]
-            [cljs.core.async :refer [put!]]
-            [client.domain :refer [add-todo-channel done-todo-channel del-todo-channel]]
-            [client.comms :refer [ch-chsk]]))
+  (:require
+    [taoensso.sente :as sente]
+    [cljs.core.async :refer [put!]]
+    [client.domain
+     :refer
+     [all-todos-channel add-todo-channel done-todo-channel del-todo-channel]]
+    [client.comms :refer [ch-chsk chsk-send!]]))
 
 (defmulti event-msg-handler
   "Multimethod to handle Sente `event-msg`s"
@@ -10,8 +13,20 @@
 
 
 (defmethod event-msg-handler :default
+           [{:keys [event]}]
+           (js/console.log event))
+
+(defn callback [reply] (put! all-todos-channel (:todos reply)))
+
+(defmethod event-msg-handler :chsk/state
            []
-           (js/console.log ":default"))
+           (chsk-send!
+            [:todos/get-all]
+            8000
+            (fn [reply]
+              (if (sente/cb-success? reply)
+                (callback reply)
+                (js/console.error reply)))))
 
 (defmethod event-msg-handler :chsk/recv
            [{:keys [?data]}]
