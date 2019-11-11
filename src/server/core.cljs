@@ -1,6 +1,5 @@
 (ns server.core
   (:require
-    [server.helpers :refer [get-random-id]]
     [taoensso.sente :as sente]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
     [server.events :refer [event-msg-handler]]
@@ -15,11 +14,11 @@
 
 (defn express-login-handler
   [req res]
-  (let [req-session (aget req "session")
-        body        (aget req "body")
-        user-id     (aget body "user-id")]
-    (js/console.log "Login request: %s" user-id)
-    (aset req-session "uid" (get-random-id))
+  (let [req-session   (aget req "session")
+        params        (aget req "params")
+        identifier    (aget params "identifier")]
+
+    (aset req-session "uid" identifier)
     (.send res "Success")))
 
 (defn add-sente-routes [express-app]
@@ -54,7 +53,7 @@
           (session
            (clj->js {:saveUninitialized true :secret "abc 123", :name "express-session"})))
 
-    (.get app "/login" express-login-handler)
+    (.get app "/login/:identifier" express-login-handler)
 
     (.use app
           (.static express "resources/public"))

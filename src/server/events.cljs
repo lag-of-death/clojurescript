@@ -23,11 +23,15 @@
 
 
 (defmethod event-msg-handler :todos/mark-as-done
-           [{:keys [?data]}]
-           (let [body      (mark-as-done (aget (clj->js ?data) "id"))]
-             (doseq [uid (:any @connected-uids)]
-               (chsk-send! uid
-                           [:todos/marked-as-done {:body (:id body)}]))))
+           [{:keys [?data ring-req]}]
+           (let [body        (mark-as-done (aget (clj->js ?data) "id"))
+
+                 req-body    (:body ring-req)
+                 session     (aget req-body "session")
+                 uid         (aget session "uid")]
+
+             (chsk-send! uid
+                         [:todos/marked-as-done {:body (:id body)}])))
 
 (defmethod event-msg-handler :todos/mark-as-deleted
            [{:keys [?data]}]
