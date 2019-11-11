@@ -17,11 +17,11 @@
     (add-todo state new-todo) new-todo))
 
 (defn mark-todo [todos todo-to-mark]
-  (swap! todos (fn [old-todos] (shared/change-todo-status old-todos todo-to-mark)))
+  (swap! todos (fn [old-todos] (shared/change-todo-status old-todos (:id todo-to-mark))))
   todo-to-mark)
 
-(defn mark-as-done [todo]
-  (->> (aget todo "id")
+(defn mark-as-done [todo-id]
+  (->> todo-id
        (#(filter (fn [todo] (= (:id todo) %)) @todos))
        (first)
        (mark-todo todos)))

@@ -24,10 +24,10 @@
 
 (defmethod event-msg-handler :todos/mark-as-done
            [{:keys [?data]}]
-           (let [body      (mark-as-done (clj->js ?data))]
+           (let [body      (mark-as-done (aget (clj->js ?data) "id"))]
              (doseq [uid (:any @connected-uids)]
                (chsk-send! uid
-                           [:todos/marked-as-done {:body body}]))))
+                           [:todos/marked-as-done {:body (:id body)}]))))
 
 (defmethod event-msg-handler :todos/mark-as-deleted
            [{:keys [?data ?reply-fn]}]

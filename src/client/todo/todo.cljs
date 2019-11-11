@@ -3,9 +3,9 @@
     [client.comms :refer [chsk-send!]]
     [client.todo.button :refer [button]]))
 
-(defn handle-click [todo]
+(defn handle-click [todo-id]
   (chsk-send!
-   [:todos/mark-as-done {:id (:id todo)}]
+   [:todos/mark-as-done {:id todo-id}]
    8000))
 
 
@@ -14,7 +14,7 @@
     ^{:key (:id todo-data)} [:li.todo
                              {}
                              [:span
-                              {:on-click #(on-click-handler todo-data)
+                              {:on-click #(on-click-handler (:id todo-data))
                                :class
                                (if (:is-done todo-data)
                                  "todo__done-item"

@@ -6,12 +6,12 @@
 
 (def map-todo
   (fn
-    [todo-to-mark todo]
+    [todo-to-mark-id todo]
     (if
-      (= (:id todo) (or (:id todo-to-mark) (aget todo-to-mark "id")))
+      (= (:id todo) todo-to-mark-id)
       (update todo :is-done #(not (:is-done todo)))
       todo)))
 
 (def change-todo-status
-  (fn [old-todos todo-to-mark]
-    (map (partial map-todo todo-to-mark) old-todos)))
+  (fn [old-todos todo-to-mark-id]
+    (map (partial map-todo todo-to-mark-id) old-todos)))
