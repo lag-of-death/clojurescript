@@ -14,9 +14,7 @@
    (while true
           (let [res            (<! channels/done-todo-channel)
                 body           (:body res)
-                jo             (:body res)
                 updated-todos  (shared/change-todo-status (:todos @state) body)]
-            (js/console.log "jo" jo)
             (swap! state assoc-in [:todos] updated-todos))))
 
   (go
