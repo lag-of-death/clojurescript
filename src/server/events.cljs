@@ -18,6 +18,7 @@
            (let [body    (:body ring-req)
                  session (aget body "session")
                  uid     (aget session "uid")]
+             (js/console.log "uid" uid)
              (when ?reply-fn
                    (?reply-fn {:uid uid :connected-uids (:ws @connected-uids) :todos @todos}))))
 
@@ -34,21 +35,27 @@
                          [:todos/marked-as-done {:body (:id body)}])))
 
 (defmethod event-msg-handler :todos/mark-as-deleted
-           [{:keys [?data]}]
+           [{:keys [?data ring-req]}]
            (let [id                   (aget (clj->js ?data) "id")
-                 deleted-todo-id      (del-todo todos id)]
-             (doseq [uid (:any @connected-uids)]
-               (chsk-send! uid
-                           [:todos/deleted {:body deleted-todo-id}]))))
+                 deleted-todo-id      (del-todo todos id)
+
+                 req-body             (:body ring-req)
+                 session              (aget req-body "session")
+                 uid                  (aget session "uid")]
+             (chsk-send! uid
+                         [:todos/deleted {:body deleted-todo-id}])))
 
 
 (defmethod event-msg-handler :todos/add
-           [{:keys [?data]}]
+           [{:keys [?data ring-req]}]
 
-           (let [todo-name      (aget (clj->js ?data) "todo-name")
-                 next-todo      (->> todo-name
-                                     (gen-next-todo todos))]
+           (let [todo-name            (aget (clj->js ?data) "todo-name")
+                 next-todo            (->> todo-name
+                                           (gen-next-todo todos))
 
-             (doseq [uid (:any @connected-uids)]
-               (chsk-send! uid
-                           [:todos/added {:body next-todo}]))))
+                 req-body             (:body ring-req)
+                 session              (aget req-body "session")
+                 uid                  (aget session "uid")]
+
+             (chsk-send! uid
+                         [:todos/added {:body next-todo}])))
