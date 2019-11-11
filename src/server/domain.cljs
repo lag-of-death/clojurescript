@@ -20,8 +20,8 @@
   (swap! todos (fn [old-todos] (shared/change-todo-status old-todos todo-to-mark)))
   todo-to-mark)
 
-(defn mark-as-done [id]
-  (->> id
+(defn mark-as-done [todo]
+  (->> (aget todo "id")
        (#(filter (fn [todo] (= (:id todo) %)) @todos))
        (first)
        (mark-todo todos)))

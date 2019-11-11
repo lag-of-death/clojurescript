@@ -8,7 +8,7 @@
   (fn
     [todo-to-mark todo]
     (if
-      (= (:id todo) (:id todo-to-mark))
+      (= (:id todo) (or (:id todo-to-mark) (aget todo-to-mark "id")))
       (update todo :is-done #(not (:is-done todo)))
       todo)))
 

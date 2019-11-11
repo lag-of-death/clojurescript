@@ -1,6 +1,6 @@
 (ns server.events
   (:require
-    [server.comms :refer [connected-uids]]
+    [server.comms :refer [connected-uids chsk-send!]]
     [server.domain :refer [todos mark-as-done del-todo gen-next-todo]]))
 
 (defmulti event-msg-handler
@@ -21,11 +21,13 @@
              (when ?reply-fn
                    (?reply-fn {:uid uid :connected-uids (:ws @connected-uids) :todos @todos}))))
 
+
 (defmethod event-msg-handler :todos/mark-as-done
-           [{:keys [?data ?reply-fn]}]
-           (let [id      (aget (clj->js ?data) "id")]
-             (when ?reply-fn
-                   (?reply-fn {:connected-uids (:ws @connected-uids) :body (mark-as-done id)}))))
+           [{:keys [?data]}]
+           (let [body      (mark-as-done (clj->js ?data))]
+             (doseq [uid (:any @connected-uids)]
+               (chsk-send! uid
+                           [:todos/marked-as-done {:body body}]))))
 
 (defmethod event-msg-handler :todos/mark-as-deleted
            [{:keys [?data ?reply-fn]}]
