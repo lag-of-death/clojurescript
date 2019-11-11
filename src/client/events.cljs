@@ -1,7 +1,7 @@
 (ns client.events
   (:require [taoensso.sente :as sente]
             [cljs.core.async :refer [put!]]
-            [client.domain :refer [done-todo-channel]]
+            [client.domain :refer [done-todo-channel del-todo-channel]]
             [client.comms :refer [ch-chsk]]))
 
 (defmulti event-msg-handler
@@ -15,8 +15,12 @@
 
 (defmethod event-msg-handler :chsk/recv
            [{:keys [?data]}]
-           (let [body (aget (aget (clj->js ?data) "1") "body")]
-             (put! done-todo-channel {:body body})))
+           (let [data       (aget (clj->js ?data) "1")
+                 body       (aget data "body")
+                 event-name (aget (clj->js ?data) "0")]
+             (if (= event-name "deleted")
+               (put! del-todo-channel {:body body})
+               (put! done-todo-channel {:body body}))))
 
 (defonce router_ (atom nil))
 
@@ -26,4 +30,3 @@
   (reset! router_
           (sente/start-client-chsk-router!
            ch-chsk event-msg-handler)))
-
