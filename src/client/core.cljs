@@ -7,12 +7,27 @@
     [client.domain :refer [state]]
     [reagent.core :as reagent]))
 
-
-(.addEventListener (js/document.getElementById "login") "change"
+(.addEventListener (js/document.getElementById "login") "click"
                    (fn [e]
-                     (-> (js/fetch (str "/login/" (-> e .-target .-value)))
-                         (.then
-                           (create-channel)
-                           (start-router!)
+                     (.preventDefault e)
 
-                           (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))
+                     (if (.checkValidity (js/document.getElementById "form"))
+                       (->>
+                        (str "/login/"
+                             (.-value (js/document.getElementById "room-name"))
+                             "/"
+                             (.-value (js/document.getElementById "password")))
+                        (js/fetch)
+
+                        (#(.then %1
+                           (fn [x]
+                             (.then (.text x)
+                                    (fn [text]
+                                      (if (= text "no auth")
+                                        (js/alert "no auth")
+                                        (do
+                                          (create-channel)
+                                          (start-router!)
+                                          (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))))))
+
+                       (js/alert "please provide room-name and pass"))))

@@ -1,6 +1,7 @@
 (ns server.core
   (:require
     [taoensso.sente :as sente]
+    [server.domain :refer [passes todos]]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
     [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
@@ -12,14 +13,29 @@
 (def body-parser (nodejs/require "body-parser"))
 (def session (nodejs/require "express-session"))
 
+
 (defn express-login-handler
   [req res]
-  (let [req-session   (aget req "session")
-        params        (aget req "params")
-        identifier    (aget params "identifier")]
+  (let [req-session        (aget req "session")
+        params             (aget req "params")
+        pass               (aget params "pass")
+        identifier         (aget params "identifier")
+        room-id            (str identifier ":" pass)]
 
-    (aset req-session "uid" identifier)
-    (.send res "Success")))
+    (if (= nil ((keyword identifier) @todos))
+      (do
+        (swap! todos assoc-in [(keyword identifier)] [])
+        (swap! passes assoc-in [(keyword pass)] pass)
+
+        (aset req-session "uid" room-id)
+
+        (.send res "room created"))
+      (if (= pass ((keyword pass) @passes))
+        (do
+          (aset req-session "uid" room-id)
+          (.send res "Success"))
+
+        (.send res "no auth")))))
 
 (defn add-sente-routes [express-app]
   (doto express-app
@@ -53,7 +69,7 @@
           (session
            (clj->js {:saveUninitialized true :secret "abc 123", :name "express-session"})))
 
-    (.get app "/login/:identifier" express-login-handler)
+    (.get app "/login/:identifier/:pass" express-login-handler)
 
     (.use app
           (.static express "resources/public"))
