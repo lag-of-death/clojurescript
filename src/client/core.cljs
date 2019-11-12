@@ -13,11 +13,14 @@
 
                      (if (.checkValidity (js/document.getElementById "form"))
                        (->>
-                        (str "/login/"
-                             (.-value (js/document.getElementById "room-name"))
-                             "/"
-                             (.-value (js/document.getElementById "password")))
-                        (js/fetch)
+                        (js/fetch "/login"
+                                  (clj->js
+                                   {:method  "POST"
+                                    :headers (clj->js {:content-type "application/json"})
+                                    :body    (js/JSON.stringify
+                                              (clj->js
+                                               {:room-name (.-value (js/document.getElementById "room-name"))
+                                                :password  (.-value (js/document.getElementById "password"))}))}))
 
                         (#(.then %1
                            (fn [x]

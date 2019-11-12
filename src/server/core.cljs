@@ -16,11 +16,13 @@
 
 (defn express-login-handler
   [req res]
-  (let [req-session        (aget req "session")
-        params             (aget req "params")
-        pass               (aget params "pass")
-        identifier         (aget params "identifier")
-        room-id            (str identifier ":" pass)]
+  (let [req-session         (aget req "session")
+        body                (aget req "body")
+
+        pass                (aget body "password")
+        identifier          (aget body "room-name")
+
+        room-id             (str identifier ":" pass)]
 
     (if (= nil ((keyword identifier) @todos))
       (do
@@ -63,13 +65,14 @@
         port (.-PORT (.-env cljs.nodejs/process))]
 
     (.use app
-          (body-parser))
+          (.json express))
+
 
     (.use app
           (session
            (clj->js {:saveUninitialized true :secret "abc 123", :name "express-session"})))
 
-    (.get app "/login/:identifier/:pass" express-login-handler)
+    (.post app "/login" express-login-handler)
 
     (.use app
           (.static express "resources/public"))
