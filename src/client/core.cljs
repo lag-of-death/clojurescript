@@ -13,8 +13,10 @@
 
                      (if (.checkValidity (js/document.getElementById "form"))
                        (->>
-                        (.-value (js/document.getElementById "room-name"))
-                        (str "/login/")
+                        (str "/login/"
+                             (.-value (js/document.getElementById "room-name"))
+                             "/"
+                             (.-value (js/document.getElementById "password")))
                         (js/fetch)
 
                         (#(.then %1
@@ -23,4 +25,4 @@
                              (start-router!)
                              (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))
 
-                       (js/alert "not valid"))))
+                       (js/alert "please provide room-name and pass"))))

@@ -14,11 +14,13 @@
 
 (defn express-login-handler
   [req res]
-  (let [req-session   (aget req "session")
-        params        (aget req "params")
-        identifier    (aget params "identifier")]
+  (let [req-session        (aget req "session")
+        params             (aget req "params")
+        pass               (aget params "pass")
+        identifier         (aget params "identifier")
+        room-id            (str identifier ":" pass)]
 
-    (aset req-session "uid" identifier)
+    (aset req-session "uid" room-id)
     (.send res "Success")))
 
 (defn add-sente-routes [express-app]
@@ -53,7 +55,7 @@
           (session
            (clj->js {:saveUninitialized true :secret "abc 123", :name "express-session"})))
 
-    (.get app "/login/:identifier" express-login-handler)
+    (.get app "/login/:identifier/:pass" express-login-handler)
 
     (.use app
           (.static express "resources/public"))
