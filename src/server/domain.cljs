@@ -3,13 +3,14 @@
     [server.helpers :refer [get-random-id]]
     [shared.domain :as shared]))
 
-(defn get-todos [uid]
-  ((keyword uid) @todos))
-
 (def todos
   (atom
    {:xyz [{:name "Learn ClojureScript" :is-done false :id 0}
           {:name "Write a great app in ClojureScript" :is-done false :id 1}]}))
+
+(defn get-todos [uid]
+  (or ((keyword uid) @todos) []))
+
 
 (defn add-todo [uid todos todo]
   (let [uid-todos ((keyword uid) @todos)]
