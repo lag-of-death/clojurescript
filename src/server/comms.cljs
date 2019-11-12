@@ -1,6 +1,6 @@
 (ns server.comms
   (:require
-    [server.domain :refer [todos passes]]
+    [server.domain :refer [todos rooms passes]]
     [taoensso.sente.server-adapters.express :as sente-express]))
 
 (let [packer :edn
@@ -32,7 +32,7 @@
                                    pass
                                    (aget room-and-pass 1)]]
 
-                       (swap! todos dissoc (keyword room))
+                       (swap! rooms disj (keyword room))
                        (swap! passes dissoc (keyword pass))
                        (swap! todos dissoc (keyword uid)))
 
