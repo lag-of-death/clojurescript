@@ -3,31 +3,35 @@
     [server.helpers :refer [get-random-id]]
     [shared.domain :as shared]))
 
+(defn get-todos [uid]
+  ((keyword uid) @todos))
+
 (def todos
   (atom
-   [{:name "Learn ClojureScript" :is-done false :id 0}
-    {:name "Write a great app in ClojureScript" :is-done false :id 1}]))
+   {:xyz [{:name "Learn ClojureScript" :is-done false :id 0}
+          {:name "Write a great app in ClojureScript" :is-done false :id 1}]}))
 
-(defn add-todo [todos todo]
-  (swap! todos (fn [old-todos] (cons todo old-todos))) todo)
+(defn add-todo [uid todos todo]
+  (let [uid-todos ((keyword uid) @todos)]
+    (swap! todos assoc (keyword uid) (cons todo uid-todos)) todo))
 
 
-(defn gen-next-todo [state todo-name]
+(defn gen-next-todo [uid state todo-name]
   (let [new-todo {:name todo-name :is-done false :id (get-random-id)}]
-    (add-todo state new-todo) new-todo))
+    (add-todo uid state new-todo) new-todo))
 
-(defn mark-todo [todos todo-to-mark]
-  (swap! todos (fn [old-todos] (shared/change-todo-status old-todos (:id todo-to-mark))))
+(defn mark-todo [uid todos todo-to-mark]
+  (swap! todos assoc (keyword uid)
+         (shared/change-todo-status ((keyword uid) @todos) (:id todo-to-mark)))
   todo-to-mark)
 
-(defn mark-as-done [todo-id]
+(defn mark-as-done [uid todo-id]
   (->> todo-id
-       (#(filter (fn [todo] (= (:id todo) %)) @todos))
+       (#(filter (fn [todo] (= (:id todo) %)) ((keyword uid) @todos)))
        (first)
-       (mark-todo todos)))
+       (mark-todo uid todos)))
 
 
-(defn del-todo [todos id]
-  (swap! todos
-         (fn [old-todos] (shared/filter-out-todo old-todos id)))
-  id)
+(defn del-todo [uid todos id]
+  (let [uid-todos ((keyword uid) @todos)]
+    (swap! todos assoc (keyword uid) (shared/filter-out-todo uid-todos id)) id))
