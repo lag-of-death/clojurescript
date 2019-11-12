@@ -20,9 +20,14 @@
                         (js/fetch)
 
                         (#(.then %1
-                           (do
-                             (create-channel)
-                             (start-router!)
-                             (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))
+                           (fn [x]
+                             (.then (.text x)
+                                    (fn [text]
+                                      (if (= text "no auth")
+                                        (js/alert "no auth")
+                                        (do
+                                          (create-channel)
+                                          (start-router!)
+                                          (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))))))
 
                        (js/alert "please provide room-name and pass"))))

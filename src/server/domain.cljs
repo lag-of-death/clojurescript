@@ -3,6 +3,8 @@
     [server.helpers :refer [get-random-id]]
     [shared.domain :as shared]))
 
+(def passes (atom {:xyz "xyz"}))
+
 (def todos
   (atom
    {:xyz [{:name "Learn ClojureScript" :is-done false :id 0}
