@@ -17,10 +17,12 @@
            [{:keys [ring-req ?reply-fn]}]
            (let [body    (:body ring-req)
                  session (aget body "session")
-                 uid     (aget session "uid")]
+                 uid     (aget session "uid")
+                 todos   (get-todos uid)]
+
              (when ?reply-fn
                    (?reply-fn
-                    {:uid uid :connected-uids (:ws @connected-uids) :todos (get-todos uid)}))))
+                    {:uid uid :connected-uids (:ws @connected-uids) :todos todos}))))
 
 
 (defmethod event-msg-handler :todos/mark-as-done
