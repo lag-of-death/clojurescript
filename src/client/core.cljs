@@ -7,12 +7,20 @@
     [client.domain :refer [state]]
     [reagent.core :as reagent]))
 
-
-(.addEventListener (js/document.getElementById "login") "change"
+(.addEventListener (js/document.getElementById "login") "click"
                    (fn [e]
-                     (-> (js/fetch (str "/login/" (-> e .-target .-value)))
-                         (.then
-                           (create-channel)
-                           (start-router!)
+                     (.preventDefault e)
 
-                           (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))
+                     (if (.checkValidity (js/document.getElementById "form"))
+                       (->>
+                        (.-value (js/document.getElementById "room-name"))
+                        (str "/login/")
+                        (js/fetch)
+
+                        (#(.then %1
+                           (do
+                             (create-channel)
+                             (start-router!)
+                             (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))
+
+                       (js/alert "not valid"))))

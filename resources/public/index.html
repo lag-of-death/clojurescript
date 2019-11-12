@@ -7,7 +7,11 @@
 </head>
 <body>
 <div>
-  <input id="login" type="text"/>
+  <form id="form">
+    <label for="room-name">room:</label><input name="room-name" required id="room-name" minlength="3" type="text"/>
+    <label for="password">pass:</label><input name="password" required minlength="3" id="password" type="text"/>
+    <button id="login">login</button>
+  </form>
 </div>
 
 <div id="app"></div>
