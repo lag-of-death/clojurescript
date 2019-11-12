@@ -1,7 +1,7 @@
 (ns server.core
   (:require
     [taoensso.sente :as sente]
-    [server.domain :refer [passes todos rooms]]
+    [server.domain :refer [passes rooms]]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
     [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
