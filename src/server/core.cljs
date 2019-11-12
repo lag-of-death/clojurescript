@@ -1,7 +1,7 @@
 (ns server.core
   (:require
     [taoensso.sente :as sente]
-    [server.domain :refer [passes todos]]
+    [server.domain :refer [passes rooms]]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
     [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
@@ -24,9 +24,9 @@
 
         room-id             (str identifier ":" pass)]
 
-    (if (= nil ((keyword identifier) @todos))
+    (if (= nil ((keyword identifier) @rooms))
       (do
-        (swap! todos assoc-in [(keyword identifier)] [])
+        (swap! rooms conj (keyword identifier))
         (swap! passes assoc-in [(keyword pass)] pass)
 
         (aset req-session "uid" room-id)

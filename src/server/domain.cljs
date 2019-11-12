@@ -3,6 +3,8 @@
     [server.helpers :refer [get-random-id]]
     [shared.domain :as shared]))
 
+(def rooms (atom #{:xyz}))
+
 (def passes (atom {:xyz "xyz"}))
 
 (def todos
