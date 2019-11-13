@@ -11,7 +11,7 @@
 (def express-ws (nodejs/require "express-ws"))
 (def ws (nodejs/require "ws"))
 (def body-parser (nodejs/require "body-parser"))
-(def session (nodejs/require "express-session"))
+(def session (nodejs/require "cookie-session"))
 
 
 (defn express-login-handler
@@ -70,7 +70,7 @@
 
     (.use app
           (session
-           (clj->js {:saveUninitialized true :secret "abc 123", :name "express-session"})))
+           (clj->js {:name "express-session" :keys ["abc123"]})))
 
     (.post app "/login" express-login-handler)
 
