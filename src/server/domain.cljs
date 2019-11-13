@@ -1,8 +1,8 @@
 (ns server.domain
   (:require
     [server.helpers :refer [get-random-id]]
+    [cljs.nodejs :as nodejs]
     [shared.domain :as shared]))
-
 
 
 (js/console.log "DATABASE_URL %s" (.-DATABASE_URL (.-env cljs.nodejs/process)))
