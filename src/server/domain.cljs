@@ -3,6 +3,10 @@
     [server.helpers :refer [get-random-id]]
     [shared.domain :as shared]))
 
+
+
+(js/console.log "DATABASE_URL %s" (.-DATABASE_URL (.-env cljs.nodejs/process)))
+
 (def rooms (atom #{:xyz}))
 
 (def passes (atom {:xyz "xyz"}))
