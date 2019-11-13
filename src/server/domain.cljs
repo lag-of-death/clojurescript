@@ -4,17 +4,13 @@
     [cljs.nodejs :as nodejs]
     [shared.domain :as shared]))
 
+(def rooms (atom #{}))
 
-(js/console.log "DATABASE_URL %s" (.-DATABASE_URL (.-env cljs.nodejs/process)))
-
-(def rooms (atom #{:xyz}))
-
-(def passes (atom {:xyz "xyz"}))
+(def passes (atom {}))
 
 (def todos
   (atom
-   {:xyz [{:name "Learn ClojureScript" :is-done false :id 0}
-          {:name "Write a great app in ClojureScript" :is-done false :id 1}]}))
+   {}))
 
 (defn get-todos [uid]
   (or ((keyword uid) @todos) []))

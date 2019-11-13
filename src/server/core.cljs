@@ -1,5 +1,6 @@
 (ns server.core
   (:require
+    [server.db]
     [taoensso.sente :as sente]
     [server.domain :refer [passes rooms]]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
