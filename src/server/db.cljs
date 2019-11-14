@@ -19,7 +19,7 @@
 
 (def url-from-env (.-DATABASE_URL (.-env cljs.nodejs/process)))
 
-(def db-spec (.parse uri URL))
+(def db-spec (.parse uri (or url-from-env URL)))
 (def user-and-pass (.split (aget db-spec "userinfo") ":"))
 
 (def client
@@ -73,42 +73,42 @@
 (add-watch rooms :rooms
            (fn [_ _ old-state new-state]
              (when (not= old-state new-state)
-                   (do (js/console.log "rooms changed %s" new-state)
-                     (->
-                      (.query client "update state set rooms = $1::json where idx=1"
-                              (clj->js [(JSON.stringify (clj->js new-state))]))
-                      (.then
-                        (fn [x] (js/console.log "OK %s" x)))
-                      (.catch
-                        (fn [x] (js/console.log "ERR %s" x))))))))
+               (do (js/console.log "rooms changed %s" new-state)
+                 (->
+                  (.query client "update state set rooms = $1::json where idx=1"
+                          (clj->js [(JSON.stringify (clj->js new-state))]))
+                  (.then
+                    (fn [x] (js/console.log "OK %s" x)))
+                  (.catch
+                    (fn [x] (js/console.log "ERR %s" x))))))))
 
 
 (add-watch passes :passes
            (fn [_ _ old-state new-state]
              (when (not= old-state new-state)
-                   (do
-                     (js/console.log "pass changed %s" new-state)
-                     (->
-                      (.query client "update state set passwords = $1::json where idx=1"
-                              (clj->js [(JSON.stringify (clj->js new-state))]))
-                      (.then
-                        (fn [x] (js/console.log "OK %s" x)))
-                      (.catch
-                        (fn [x] (js/console.log "ERR %s" x))))))))
+               (do
+                 (js/console.log "pass changed %s" new-state)
+                 (->
+                  (.query client "update state set passwords = $1::json where idx=1"
+                          (clj->js [(JSON.stringify (clj->js new-state))]))
+                  (.then
+                    (fn [x] (js/console.log "OK %s" x)))
+                  (.catch
+                    (fn [x] (js/console.log "ERR %s" x))))))))
 
 
 (add-watch todos :todos
            (fn [_ _ old-state new-state]
 
              (when (not= old-state new-state)
-                   (js/console.log "todos changed %s" new-state)
+               (js/console.log "todos changed %s" new-state)
 
-                   (do
-                     (->
-                      (.query client "update state set todos = $1::json where idx=1"
-                              (clj->js [(JSON.stringify (clj->js new-state))]))
-                      (.then
-                        (fn [x] (js/console.log "OK %s" x)))
-                      (.catch
-                        (fn [x] (js/console.log "ERR %s" x))))))))
+               (do
+                 (->
+                  (.query client "update state set todos = $1::json where idx=1"
+                          (clj->js [(JSON.stringify (clj->js new-state))]))
+                  (.then
+                    (fn [x] (js/console.log "OK %s" x)))
+                  (.catch
+                    (fn [x] (js/console.log "ERR %s" x))))))))
 
