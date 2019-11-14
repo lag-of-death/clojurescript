@@ -1,11 +1,16 @@
 (ns client.comms
   (:require [taoensso.sente :as sente]))
 
+(def chsk nil)
+(def ch-chsk nil)
+(def chsk-send! nil)
+(def chsk-state nil)
+
 (defn create-channel []
   (let [{:keys [chsk ch-recv send-fn state]}
         (sente/make-channel-socket! "/chsk"
                                     {:type :auto})]
-    (def chsk chsk)
-    (def ch-chsk ch-recv)
-    (def chsk-send! send-fn)
-    (def chsk-state state)))
+    (set! client.comms/chsk chsk)
+    (set! client.comms/ch-chsk ch-recv)
+    (set! client.comms/chsk-send! send-fn)
+    (set! client.comms/chsk-state state)))
