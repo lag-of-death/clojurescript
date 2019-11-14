@@ -64,15 +64,15 @@
   (add-watch atom (keyword table-name)
              (fn [_ _ old-state new-state]
                (when (not= old-state new-state)
-                 (do
-                   (js/console.log (str table-name " new state: %s") new-state)
-                   (->
-                    (.query db-client (str "update state set " table-name " = $1::json where idx=1")
-                            (clj->js [(JSON.stringify (clj->js new-state))]))
-                    (.then
-                      (fn [x] (js/console.log "OK:" x)))
-                    (.catch
-                      (fn [x] (js/console.log "ERR:" x)))))))))
+                     (do
+                       (js/console.log (str table-name " new state: %s") new-state)
+                       (->
+                        (.query db-client (str "update state set " table-name " = $1::json where idx=1")
+                                (clj->js [(js/JSON.stringify (clj->js new-state))]))
+                        (.then
+                          (fn [x] (js/console.log "OK:" x)))
+                        (.catch
+                          (fn [x] (js/console.log "ERR:" x)))))))))
 
 (watch client passwords "passwords")
 (watch client rooms "rooms")

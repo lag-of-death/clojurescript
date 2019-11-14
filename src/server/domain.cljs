@@ -1,7 +1,6 @@
 (ns server.domain
   (:require
     [server.helpers :refer [get-random-id]]
-    [cljs.nodejs :as nodejs]
     [shared.domain :as shared]))
 
 (def rooms (atom #{}))
