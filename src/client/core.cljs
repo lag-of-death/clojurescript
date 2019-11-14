@@ -27,9 +27,8 @@
                                     (fn [text]
                                       (if (= text "no auth")
                                         (js/alert "no auth")
-                                        (do
-                                          (let [sente-router (start-router!)]
-                                            (reagent/render [todo/app (create-store state) sente-router]
-                                                            (.getElementById js/document "app")))))))))))
+                                        (let [sente-router (start-router!)]
+                                          (reagent/render [todo/app (create-store state) sente-router]
+                                                          (.getElementById js/document "app"))))))))))
 
                        (js/alert "please provide room-name and pass"))))

@@ -6,11 +6,11 @@
      :refer
      [all-todos-channel add-todo-channel done-todo-channel del-todo-channel]]))
 
-(defmulti event-msg-handler (fn [send-fn opts] (:id opts)))
+(defmulti event-msg-handler (fn [_ opts] (:id opts)))
 
 
 (defmethod event-msg-handler :default
-           [chsk-send! {:keys [event]}]
+           [_ {:keys [event]}]
            (js/console.log "evt" event))
 
 (defn callback [reply] (put! all-todos-channel (:todos reply)))
@@ -26,7 +26,7 @@
                 (js/console.error reply)))))
 
 (defmethod event-msg-handler :chsk/recv
-           [chsk-send! {:keys [?data]}]
+           [_ {:keys [?data]}]
            (let [data       (aget (clj->js ?data) "1")
                  body       (aget data "body")
                  event-name (aget (clj->js ?data) "0")]
@@ -39,7 +39,7 @@
 
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []
-  (let [{:keys [chsk ch-recv send-fn state]}
+  (let [{:keys [ch-recv send-fn]}
         (sente/make-channel-socket! "/chsk"
                                     {:type :auto})]
 
