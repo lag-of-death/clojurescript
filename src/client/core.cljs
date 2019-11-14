@@ -1,7 +1,6 @@
 (ns client.core
   (:require
     [client.events :refer [start-router!]]
-    [client.comms :refer [create-channel]]
     [client.state_changes :refer [create-store]]
     [client.todo.core :as todo]
     [client.domain :refer [state]]
@@ -29,8 +28,8 @@
                                       (if (= text "no auth")
                                         (js/alert "no auth")
                                         (do
-                                          (create-channel)
-                                          (start-router!)
-                                          (reagent/render [todo/app (create-store state)] (.getElementById js/document "app"))))))))))
+                                          (let [sente-router (start-router!)]
+                                            (reagent/render [todo/app (create-store state) sente-router]
+                                                            (.getElementById js/document "app")))))))))))
 
                        (js/alert "please provide room-name and pass"))))

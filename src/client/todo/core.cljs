@@ -1,7 +1,6 @@
 (ns client.todo.core
   (:require
     [client.todo.todos :refer [generate-todos]]
-    [client.comms :refer [chsk-send!]]
     [cljs.core.async :refer [put!]]
     [client.domain
      :refer
@@ -13,8 +12,8 @@
 
 (def change-filter (partial change-filter-with-channel filter-todos-channel))
 
-(defn on-add-btn-clicked-with-channel [todo-name]
-  (chsk-send!
+(defn on-add-btn-clicked-with-channel [todo-name send-fn]
+  (send-fn
    [:todos/add {:todo-name todo-name}]
    8000))
 
@@ -24,7 +23,7 @@
 
 (def on-input-change (partial on-input-change-with-channel todo-input-channel))
 
-(defn app [state]
+(defn app [state send-fn]
   (let [app-state @state]
     [:main.main
      [:div.menu
@@ -37,13 +36,13 @@
       [:div.todos
        [:ul.todos__list
         (case (:filter-todos-by app-state)
-              "DONE"   (generate-todos (filter :is-done (:todos app-state)))
-              "ALL"    (generate-todos (:todos app-state))
-              "TO-DO"  (generate-todos (remove :is-done (:todos app-state)))
-              (generate-todos (:todos app-state)))]]
+              "DONE"   (generate-todos send-fn (filter :is-done (:todos app-state)))
+              "ALL"    (generate-todos send-fn (:todos app-state))
+              "TO-DO"  (generate-todos send-fn (remove :is-done (:todos app-state)))
+              (generate-todos send-fn (:todos app-state)))]]
       [:div.add-area
        [:input.input {:on-change #(on-input-change %)}]
        [:button.button.button--adder
         {:disabled (blank? (:input app-state))
-         :on-click #(on-add-btn-clicked-with-channel (:input app-state))}
+         :on-click #(on-add-btn-clicked-with-channel (:input app-state) send-fn)}
         [:span "add"]]]]]))
