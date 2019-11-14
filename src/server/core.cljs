@@ -1,7 +1,8 @@
 (ns server.core
   (:require
+    [server.db]
     [taoensso.sente :as sente]
-    [server.domain :refer [passes rooms]]
+    [server.domain :refer [passwords rooms]]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
     [server.events :refer [event-msg-handler]]
     [cljs.nodejs :as nodejs]))
@@ -27,12 +28,12 @@
     (if (= nil ((keyword identifier) @rooms))
       (do
         (swap! rooms conj (keyword identifier))
-        (swap! passes assoc-in [(keyword pass)] pass)
+        (swap! passwords assoc-in [(keyword pass)] pass)
 
         (aset req-session "uid" room-id)
 
         (.send res "room created"))
-      (if (= pass ((keyword pass) @passes))
+      (if (= pass ((keyword pass) @passwords))
         (do
           (aset req-session "uid" room-id)
           (.send res "Success"))

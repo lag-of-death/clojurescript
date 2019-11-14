@@ -1,16 +1,16 @@
 (ns server.domain
   (:require
     [server.helpers :refer [get-random-id]]
+    [cljs.nodejs :as nodejs]
     [shared.domain :as shared]))
 
-(def rooms (atom #{:xyz}))
+(def rooms (atom #{}))
 
-(def passes (atom {:xyz "xyz"}))
+(def passwords (atom {}))
 
 (def todos
   (atom
-   {:xyz [{:name "Learn ClojureScript" :is-done false :id 0}
-          {:name "Write a great app in ClojureScript" :is-done false :id 1}]}))
+   {}))
 
 (defn get-todos [uid]
   (or ((keyword uid) @todos) []))

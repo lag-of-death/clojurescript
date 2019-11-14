@@ -1,6 +1,6 @@
 (ns server.comms
   (:require
-    [server.domain :refer [todos rooms passes]]
+    [server.domain :refer [todos rooms passwords]]
     [taoensso.sente.server-adapters.express :as sente-express]))
 
 (let [packer :edn
@@ -33,7 +33,7 @@
                                    (aget room-and-pass 1)]]
 
                        (swap! rooms disj (keyword room))
-                       (swap! passes dissoc (keyword pass))
+                       (swap! passwords dissoc (keyword pass))
                        (swap! todos dissoc (keyword uid)))
 
                      (js/console.log "Connected uids change: %s" new)))))
