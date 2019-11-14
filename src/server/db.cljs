@@ -1,7 +1,7 @@
 (ns server.db
   (:require
     [cljs.nodejs :as nodejs]
-    [server.domain :refer [rooms passes todos]]))
+    [server.domain :refer [rooms passwords todos]]))
 
 (def uri
   (nodejs/require
@@ -62,11 +62,11 @@
                 t            (js->clj todos-db)
                 p            (js->clj passwords-db)]
 
-            (js/console.log "hehe %s %s %s" r t p)
+            (js/console.log "state %s %s %s" r t p)
 
             (reset! todos (map-todos t))
             (reset! rooms (set (map keyword r)))
-            (reset! passes (to-keywords p))))))))
+            (reset! passwords (to-keywords p))))))))
  (.catch (fn [err] (js/console.log "catch!" err))))
 
 
@@ -83,7 +83,7 @@
                     (fn [x] (js/console.log "ERR %s" x))))))))
 
 
-(add-watch passes :passes
+(add-watch passwords :passwords
            (fn [_ _ old-state new-state]
              (when (not= old-state new-state)
                (do

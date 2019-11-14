@@ -6,7 +6,7 @@
 
 (def rooms (atom #{}))
 
-(def passes (atom {}))
+(def passwords (atom {}))
 
 (def todos
   (atom
