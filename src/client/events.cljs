@@ -4,22 +4,19 @@
     [cljs.core.async :refer [put!]]
     [client.domain
      :refer
-     [all-todos-channel add-todo-channel done-todo-channel del-todo-channel]]
-    [client.comms :refer [ch-chsk chsk-send!]]))
+     [all-todos-channel add-todo-channel done-todo-channel del-todo-channel]]))
 
-(defmulti event-msg-handler
-  "Multimethod to handle Sente `event-msg`s"
-  :id)
+(defmulti event-msg-handler (fn [_ opts] (:id opts)))
 
 
 (defmethod event-msg-handler :default
-           [{:keys [event]}]
-           (js/console.log event))
+           [_ {:keys [event]}]
+           (js/console.log "evt" event))
 
 (defn callback [reply] (put! all-todos-channel (:todos reply)))
 
 (defmethod event-msg-handler :chsk/state
-           []
+           [chsk-send!]
            (chsk-send!
             [:todos/get-all]
             8000
@@ -29,7 +26,7 @@
                 (js/console.error reply)))))
 
 (defmethod event-msg-handler :chsk/recv
-           [{:keys [?data]}]
+           [_ {:keys [?data]}]
            (let [data       (aget (clj->js ?data) "1")
                  body       (aget data "body")
                  event-name (aget (clj->js ?data) "0")]
@@ -42,7 +39,13 @@
 
 (defn stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []
-  (stop-router!)
-  (reset! router_
-          (sente/start-client-chsk-router!
-           ch-chsk event-msg-handler)))
+  (let [{:keys [ch-recv send-fn]}
+        (sente/make-channel-socket! "/chsk"
+                                    {:type :auto})]
+
+    (stop-router!)
+    (reset! router_
+            (sente/start-client-chsk-router!
+             ch-recv (partial event-msg-handler send-fn)))
+
+    send-fn))
