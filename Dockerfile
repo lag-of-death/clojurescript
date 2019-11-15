@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm ci --production
+RUN npm ci
 RUN npm run build
 
 EXPOSE 4000
