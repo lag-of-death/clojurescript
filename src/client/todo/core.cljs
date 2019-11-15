@@ -22,8 +22,14 @@
 (defn on-input-change-with-channel [channel evt]
   (put! channel (-> evt .-target .-value)))
 
+(def on-key-up
+  (fn [send-fn evt]
+    (when (= 13 (-> evt .-keyCode))
+          (on-add-btn-clicked-with-channel (-> evt .-target .-value) send-fn))))
+
 (def on-input-change
-  (fn [evt] (on-input-change-with-channel todo-input-channel evt)))
+  (fn [evt]
+    (on-input-change-with-channel todo-input-channel evt)))
 
 (defn app [state send-fn]
   (let [app-state @state]
@@ -43,7 +49,10 @@
               "TO-DO"  (generate-todos send-fn (remove :is-done (:todos app-state)))
               (generate-todos send-fn (:todos app-state)))]]
       [:div.add-area
-       [:input.input {:value (:input app-state) :on-change #(on-input-change %)}]
+       [:input.input
+        {:value     (:input app-state)
+         :on-key-up #(on-key-up send-fn %)
+         :on-change #(on-input-change %)}]
        [:button.button.button--adder
         {:disabled (blank? (:input app-state))
          :on-click #(on-add-btn-clicked-with-channel (:input app-state) send-fn)}
