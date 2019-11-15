@@ -16,8 +16,8 @@
                               {:on-click #(on-click-handler send-fn (:id todo-data))
                                :class
                                (if (:is-done todo-data)
-                                 "todo__done-item"
-                                 "todo__new-item")}
+                                 "todo__item todo__item--done"
+                                 "todo__item")}
                               (:name todo-data)]
                              [button send-fn (:id todo-data)]]))
 
