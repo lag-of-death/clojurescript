@@ -28,6 +28,7 @@
                                       (if (= text "no auth")
                                         (js/alert "no auth")
                                         (let [sente-router (start-router!)]
+                                          (.remove (js/document.getElementById "form"))
                                           (reagent/render [todo/app (create-store state) sente-router]
                                                           (.getElementById js/document "app"))))))))))
 

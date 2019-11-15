@@ -1,4 +1,6 @@
-/resources
+/resources/public/styles-out.css
+/resources/public/js/
+/resources/server/
 /out
 /node_modules
 .idea/

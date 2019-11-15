@@ -3,12 +3,12 @@ html, body {
 }
 
 html {
-    overflow-x: hidden;
+    font-size: 10px;
+    overflow: hidden;
 }
 
 * {
     font-family: Delicious, monospace;
-    text-shadow: 2px 2px 0 darkorange;
 }
 
 @font-face {
@@ -17,26 +17,20 @@ html {
 }
 
 #app {
+    height: 100%;
     display: flex;
     justify-content: center;
 }
 
 main {
-    margin-top: 10px;
-    height: 40%;
+    height: 90%;
+    width: 100%;
     display: flex;
     justify-content: space-around;
-    box-shadow: 10px 10px 3px #888888;
-    border: 2px solid black;
-    border-radius: 4px;
     padding: 8px;
+    flex-flow: column;
 }
 
-@media only screen and (min-width: 480px) {
-    main {
-        width: 60%;
-    }
-}
 
 .button {
     margin: 2px;
@@ -48,7 +42,7 @@ main {
 }
 
 .todos {
-    height: 80%;
+    height: 100%;
     overflow: auto;
 }
 
@@ -61,22 +55,24 @@ main {
 }
 
 .menu {
-    width: 30%;
+    width: 100%;
 }
 
 .menu__buttons {
+    justify-content: space-evenly;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .todos-container {
-    width: 65%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
 .add-area {
+    margin-top: 1rem;
     display: flex;
     justify-content: space-between;
 }
@@ -102,6 +98,7 @@ main {
 }
 
 .login-form {
+    text-shadow: 2px 2px 0 darkorange;
     font-size: 2rem;
     display: flex;
     flex-flow: column;
@@ -119,6 +116,7 @@ main {
 }
 
 .login-form__input--button {
+    text-shadow: 2px 2px 0 darkorange;
     margin-top: 1em;
     padding: 6px;
     box-shadow: 2px 2px 0 black;
@@ -132,4 +130,28 @@ main {
     max-width: 80%;
     border: none;
     border-bottom: 2px solid gray;
+}
+
+@media only screen and (min-width: 768px) {
+    .menu {
+        width: 30%
+    }
+
+    .menu__buttons {
+        flex-direction: column;
+    }
+
+    main {
+        flex-flow: row;
+        box-shadow: 10px 10px 3px #888888;
+        border: 2px solid black;
+        border-radius: 4px;
+        margin-top: 10px;
+        max-width: 60%;
+    }
+
+    .todos-container {
+        height: 90%;
+        width: 65%;
+    }
 }
