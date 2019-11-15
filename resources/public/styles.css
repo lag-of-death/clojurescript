@@ -1,5 +1,12 @@
 html, body {
     height: 100%;
+    background: #80DFFF;
+}
+
+body {
+    margin: 0;
+    padding: 0 2px;
+    overflow: hidden;
 }
 
 html {
@@ -23,22 +30,34 @@ html {
 }
 
 main {
-    height: 90%;
+    background-position: 0 2px;
+    background-size: 60px 60px;
+    font-size: 25px;
+    background-color: antiquewhite;
+    background-image: repeating-linear-gradient(0deg, #80DFFF, #80DFFF 2px, transparent 1px, transparent 30px);
+
+    height: 100%;
     width: 100%;
     display: flex;
     justify-content: space-around;
-    padding: 8px;
+    padding: 0 4px;
     flex-flow: column;
 }
 
 
 .button {
+    background: lightgrey;
+    text-shadow: 2px 2px 0 darkorange;
+    padding: 6px;
+    box-shadow: 2px 2px 0 black;
+
     margin: 2px;
     border: 2px solid black;
 }
 
 .button--adder {
     width: 18%;
+    font-size: 1em;
 }
 
 .todos {
@@ -47,8 +66,8 @@ main {
 }
 
 .todo {
+    max-width: 100%;
     display: flex;
-    border-bottom: 1px dashed black;
     justify-content: space-between;
     padding: 2% 0;
     align-items: center;
@@ -72,29 +91,54 @@ main {
 }
 
 .add-area {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
 }
 
 .menu__current-tab {
+    margin: 10px 0;
     text-align: center;
+}
+
+.menu__buttons .button {
+    flex-grow: 1;
+    font-size: 0.8em;
+}
+
+.todo .button {
+    font-size: 0.7em;
 }
 
 .input {
     width: 80%;
+    margin-top: 4px;
+
+    border-radius: 0;
+    font-size: 1.5em;
+    text-shadow: 2px 2px 0 gray;
+    text-align: center;
+    border: none;
+    border-bottom: 4px solid gray;
 }
 
 .todos__list {
-    padding: 0;
+    padding: 4px;
 }
 
 .todo__done-item {
     text-decoration: line-through;
+    max-width: 80%;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }
 
 .todo__new-item {
+    max-width: 80%;
+    overflow-wrap: break-word;
     text-decoration: none;
+    word-break: break-all;
 }
 
 .login-form {
@@ -108,6 +152,7 @@ main {
 }
 
 .login-form__label {
+    font-size: 1.3em;
     margin-top: 1em;
 }
 
@@ -116,6 +161,7 @@ main {
 }
 
 .login-form__input--button {
+    background: lightgrey;
     text-shadow: 2px 2px 0 darkorange;
     margin-top: 1em;
     padding: 6px;
@@ -123,16 +169,21 @@ main {
 }
 
 .login-form__input--text {
+    border-radius: 0;
     margin-top: 0.5em;
     font-size: 1.5em;
     text-shadow: 2px 2px 0 gray;
     text-align: center;
     max-width: 80%;
     border: none;
-    border-bottom: 2px solid gray;
+    border-bottom: 4px solid gray;
 }
 
 @media only screen and (min-width: 768px) {
+    #app {
+        height: 90%;
+    }
+
     .menu {
         width: 30%
     }
@@ -143,11 +194,15 @@ main {
 
     main {
         flex-flow: row;
-        box-shadow: 10px 10px 3px #888888;
+        box-shadow: 6px 6px 3px #888888;
         border: 2px solid black;
         border-radius: 4px;
         margin-top: 10px;
         max-width: 60%;
+    }
+
+    .todos {
+        margin-top: 10px;
     }
 
     .todos-container {

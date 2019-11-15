@@ -56,4 +56,4 @@
        [:button.button.button--adder
         {:disabled (blank? (:input app-state))
          :on-click #(on-add-btn-clicked-with-channel (:input app-state) send-fn)}
-        [:span "add"]]]]]))
+        [:span "+"]]]]]))
