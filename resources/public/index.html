@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="html" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="styles-out.css" type="text/css"/>
 </head>
-<body>
+<body class="page">
 <form id="form" class="login-form">
     <label for="room-name" class="login-form__label">room:</label>
-    <input class="login-form__input login-form__input--text" name="room-name" required id="room-name"
+    <input class="login-form__input" name="room-name" required id="room-name"
            minlength="3" type="text"/>
 
     <label for="password" class="login-form__label">pass:</label>
-    <input class="login-form__input login-form__input--text" name="password" required minlength="3"
+    <input class="login-form__input" name="password" required minlength="3"
            id="password" type="text"/>
 
-    <button class="button login-form__input login-form__input--button" id="login">login</button>
+    <button class="button login-form__button" id="login">login</button>
 </form>
 
-<div id="app"></div>
+<div id="app" class="app"></div>
 <script src="js/compiled/client.js"></script>
 </body>
 </html>

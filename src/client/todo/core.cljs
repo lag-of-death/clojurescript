@@ -37,9 +37,11 @@
      [:div.menu
       [:p.menu__current-tab (:filter-todos-by app-state) " " "todos"]
       [:div.menu__buttons
-       [:button.button {:on-click #(change-filter "ALL")} [:span "all"]]
-       [:button.button {:on-click #(change-filter "DONE")} [:span "done"]]
-       [:button.button {:on-click #(change-filter "TO-DO")} [:span "to-do"]]]]
+       [:button.button.menu__button {:on-click #(change-filter "ALL")} [:span "all"]]
+       [:button.button.menu__button {:on-click #(change-filter "DONE")} [:span "done"]]
+       [:button.button.menu__button
+        {:on-click #(change-filter "TO-DO")}
+        [:span "to-do"]]]]
      [:div.todos-container
       [:div.todos
        [:ul.todos__list
