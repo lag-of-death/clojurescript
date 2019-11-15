@@ -13,6 +13,7 @@
 (def change-filter (partial change-filter-with-channel filter-todos-channel))
 
 (defn on-add-btn-clicked-with-channel [todo-name send-fn]
+  (put! todo-input-channel "")
   (send-fn
    [:todos/add {:todo-name todo-name}]
    8000))
@@ -21,7 +22,8 @@
 (defn on-input-change-with-channel [channel evt]
   (put! channel (-> evt .-target .-value)))
 
-(def on-input-change (partial on-input-change-with-channel todo-input-channel))
+(def on-input-change
+  (fn [evt] (on-input-change-with-channel todo-input-channel evt)))
 
 (defn app [state send-fn]
   (let [app-state @state]
@@ -41,7 +43,7 @@
               "TO-DO"  (generate-todos send-fn (remove :is-done (:todos app-state)))
               (generate-todos send-fn (:todos app-state)))]]
       [:div.add-area
-       [:input.input {:on-change #(on-input-change %)}]
+       [:input.input {:value (:input app-state) :on-change #(on-input-change %)}]
        [:button.button.button--adder
         {:disabled (blank? (:input app-state))
          :on-click #(on-add-btn-clicked-with-channel (:input app-state) send-fn)}
