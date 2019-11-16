@@ -3,7 +3,7 @@
 
 (defn handle-del-btn-clicked-with-channel [send-fn id]
   (send-fn
-   [:todos/mark-as-deleted {:id id}]
+   [:todos/mark-as-deleted id]
    8000))
 
 

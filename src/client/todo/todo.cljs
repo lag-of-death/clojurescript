@@ -4,7 +4,7 @@
 
 (defn handle-click [send-fn todo-id]
   (send-fn
-   [:todos/mark-as-done {:id todo-id}]
+   [:todos/mark-as-done todo-id]
    8000))
 
 

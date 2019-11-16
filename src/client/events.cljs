@@ -13,7 +13,7 @@
            [_ {:keys [event]}]
            (js/console.log "evt" event))
 
-(defn callback [reply] (put! all-todos-channel (:todos reply)))
+(defn callback [reply] (put! all-todos-channel reply))
 
 (defmethod event-msg-handler :chsk/state
            [chsk-send!]
@@ -28,12 +28,11 @@
 (defmethod event-msg-handler :chsk/recv
            [_ {:keys [?data]}]
            (let [data       (aget (clj->js ?data) "1")
-                 body       (aget data "body")
                  event-name (aget (clj->js ?data) "0")]
              (case event-name
-                   "deleted"        (put! del-todo-channel {:body body})
-                   "marked-as-done" (put! done-todo-channel {:body body})
-                   "added"          (put! add-todo-channel body))))
+                   "deleted"        (put! del-todo-channel data)
+                   "marked-as-done" (put! done-todo-channel data)
+                   "added"          (put! add-todo-channel data))))
 
 (defonce router_ (atom nil))
 

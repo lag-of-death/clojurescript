@@ -15,7 +15,7 @@
 (defn on-add-btn-clicked-with-channel [todo-name send-fn]
   (put! todo-input-channel "")
   (send-fn
-   [:todos/add {:todo-name todo-name}]
+   [:todos/add todo-name]
    8000))
 
 

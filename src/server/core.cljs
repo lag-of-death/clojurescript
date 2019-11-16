@@ -1,6 +1,6 @@
 (ns server.core
   (:require
-    [server.db]
+    [server.persistence]
     [taoensso.sente :as sente]
     [server.domain :refer [passwords rooms]]
     [server.comms :refer [ajax-get-or-ws-handshake ajax-post ch-chsk]]
@@ -36,9 +36,9 @@
       (if (= pass ((keyword pass) @passwords))
         (do
           (aset req-session "uid" room-id)
-          (.send res "Success"))
+          (.send res "success"))
 
-        (.send res "no auth")))))
+        (.status 403 res (.send "no auth"))))))
 
 (defn add-sente-routes [express-app]
   (doto express-app

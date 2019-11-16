@@ -6,11 +6,13 @@
     [client.domain :refer [state]]
     [reagent.core :as reagent]))
 
+(def form (js/document.getElementById "form"))
+
 (.addEventListener (js/document.getElementById "login") "click"
                    (fn [e]
                      (.preventDefault e)
 
-                     (if (.checkValidity (js/document.getElementById "form"))
+                     (if (.checkValidity form)
                        (->>
                         (js/fetch "/login"
                                   (clj->js
@@ -28,7 +30,7 @@
                                       (if (= text "no auth")
                                         (js/alert "no auth")
                                         (let [sente-router (start-router!)]
-                                          (.remove (js/document.getElementById "form"))
+                                          (.remove form)
                                           (reagent/render [todo/app (create-store state) sente-router]
                                                           (.getElementById js/document "app"))))))))))
 

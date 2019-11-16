@@ -1,5 +1,6 @@
-(ns server.db
+(ns server.persistence
   (:require
+    [server.helpers :refer [to-keywords map-todos]]
     [cljs.nodejs :as nodejs]
     [server.domain :refer [rooms passwords todos]]))
 
@@ -26,16 +27,6 @@
 
 (def c (.connect client))
 
-(defn to-keywords [my-map]
-  (into {}
-        (for [[k v] my-map]
-          {(keyword k) v})))
-
-(defn map-todos [my-map]
-  (into {}
-        (for [[k v] my-map]
-          {(keyword k) (map (fn [x] (to-keywords x)) v)})))
-
 (->
  c
  (.then
@@ -44,14 +35,14 @@
       (.query client "select * from state")
       (.then
         (fn [data]
-          (let [data         (aget (.-rows data) "0")
-                rooms-db     (aget data "rooms")
-                todos-db     (aget data "todos")
-                passwords-db (aget data "passwords")
+          (let [data                 (aget (.-rows data) "0")
+                rooms-table-data     (aget data "rooms")
+                todos-table-data     (aget data "todos")
+                passwords-table-data (aget data "passwords")
 
-                r            (js->clj rooms-db)
-                t            (js->clj todos-db)
-                p            (js->clj passwords-db)]
+                r                    (js->clj rooms-table-data)
+                t                    (js->clj todos-table-data)
+                p                    (js->clj passwords-table-data)]
 
             (js/console.log "state %s %s %s" r t p)
 

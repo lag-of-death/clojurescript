@@ -14,14 +14,13 @@
   (go
    (while true
           (let [res            (<! channels/done-todo-channel)
-                body           (:body res)
-                updated-todos  (shared/change-todo-status (:todos @state) body)]
+                updated-todos  (shared/change-todo-status (:todos @state) res)]
             (swap! state assoc-in [:todos] updated-todos))))
 
   (go
    (while true
           (let [res (<! channels/del-todo-channel)]
-            (swap! state assoc-in [:todos] (shared/filter-out-todo (:todos @state) (:body res))))))
+            (swap! state assoc-in [:todos] (shared/filter-out-todo (:todos @state) res)))))
 
   (go
    (while true

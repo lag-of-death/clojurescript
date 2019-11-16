@@ -1,11 +1,9 @@
 (ns server.events
   (:require
-    [server.comms :refer [connected-uids chsk-send!]]
+    [server.comms :refer [chsk-send!]]
     [server.domain :refer [get-todos todos mark-as-done del-todo gen-next-todo]]))
 
-(defmulti event-msg-handler
-  "Multimethod to handle Sente `event-msg`s"
-  :id)
+(defmulti event-msg-handler :id)
 
 (defmethod event-msg-handler :default
            [{:keys [event ?reply-fn]}]
@@ -18,11 +16,10 @@
            (let [body    (:body ring-req)
                  session (aget body "session")
                  uid     (aget session "uid")
+
                  todos   (get-todos uid)]
 
-             (when ?reply-fn
-                   (?reply-fn
-                    {:uid uid :connected-uids (:ws @connected-uids) :todos todos}))))
+             (when ?reply-fn (?reply-fn todos))))
 
 
 (defmethod event-msg-handler :todos/mark-as-done
@@ -31,10 +28,10 @@
                  session     (aget req-body "session")
                  uid         (aget session "uid")
 
-                 body        (mark-as-done uid (aget (clj->js ?data) "id"))]
+                 todo        (mark-as-done uid ?data)]
 
              (chsk-send! uid
-                         [:todos/marked-as-done {:body (:id body)}])))
+                         [:todos/marked-as-done (:id todo)])))
 
 (defmethod event-msg-handler :todos/mark-as-deleted
            [{:keys [?data ring-req]}]
@@ -42,10 +39,9 @@
                  session              (aget req-body "session")
                  uid                  (aget session "uid")
 
-                 id                   (aget (clj->js ?data) "id")
-                 deleted-todo-id      (del-todo uid todos id)]
+                 deleted-todo-id      (del-todo uid todos (clj->js ?data))]
              (chsk-send! uid
-                         [:todos/deleted {:body deleted-todo-id}])))
+                         [:todos/deleted deleted-todo-id])))
 
 
 (defmethod event-msg-handler :todos/add
@@ -55,9 +51,7 @@
                  session              (aget req-body "session")
                  uid                  (aget session "uid")
 
-
-                 todo-name            (aget (clj->js ?data) "todo-name")
-                 next-todo            (gen-next-todo uid todos todo-name)]
+                 next-todo            (gen-next-todo uid todos (clj->js ?data))]
 
              (chsk-send! uid
-                         [:todos/added {:body next-todo}])))
+                         [:todos/added next-todo])))
