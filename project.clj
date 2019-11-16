@@ -41,9 +41,8 @@
      :compiler     {:main          client.core
                     :asset-path    "js/compiled/out"
                     :output-to     "resources/public/js/compiled/client.js"
-                    :output-dir    "resources/public/js/compiled/out"
-                    :optimizations :none
-                    :source-map    false}}
+                    :output-dir    "resources/tmp/out"
+                    :optimizations :advanced}}
     {:id           "test"
      :source-paths ["src" "test"]
      :compiler     {:main          tests
