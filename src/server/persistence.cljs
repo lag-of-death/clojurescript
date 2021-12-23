@@ -7,12 +7,9 @@
 (def pg (nodejs/require "pg"))
 (def uri (nodejs/require "uri-js"))
 
-(def URL
-  "postgres://rmpympltjjjlbl:b8247097aac15a4cb690f06df43299caf98d92b0027f88cc701cf78dd6a3d48f@ec2-54-247-92-167.eu-west-1.compute.amazonaws.com:5432/d6ead8ak9o2geh")
-
 (def url-from-env (.-DATABASE_URL (.-env cljs.nodejs/process)))
 
-(def db-spec (.parse uri (or url-from-env URL)))
+(def db-spec (.parse uri url-from-env))
 (def user-and-pass (.split (aget db-spec "userinfo") ":"))
 
 (def client
