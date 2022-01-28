@@ -25,7 +25,7 @@
 
         room-id             (str identifier ":" pass)]
 
-    (if (= nil ((keyword identifier) @rooms))
+    (if (nil? ((keyword identifier) (deref rooms)))
       (do
         (swap! rooms conj (keyword identifier))
         (swap! passwords assoc-in [(keyword pass)] pass)

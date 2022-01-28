@@ -10,4 +10,4 @@
 (defn map-todos [my-map]
   (into {}
         (for [[k v] my-map]
-          {(keyword k) (map (fn [x] (to-keywords x)) v)})))
+          {(keyword k) (map to-keywords v)})))

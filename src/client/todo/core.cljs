@@ -24,7 +24,7 @@
 
 (def on-key-up
   (fn [send-fn evt]
-    (when (= 13 (-> evt .-keyCode))
+    (when (= 13 (.-keyCode evt))
       (on-add-btn-clicked-with-channel (-> evt .-target .-value) send-fn))))
 
 (def on-input-change
@@ -54,7 +54,7 @@
        [:input.input
         {:value     (:input app-state)
          :on-key-up #(on-key-up send-fn %)
-         :on-change #(on-input-change %)}]
+         :on-change on-input-change}]
        [:button.button.button--adder
         {:disabled (blank? (:input app-state))
          :on-click #(on-add-btn-clicked-with-channel (:input app-state) send-fn)}

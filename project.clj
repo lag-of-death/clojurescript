@@ -21,6 +21,8 @@
 
   :plugins
   [[lein-kibit "0.1.5"]
+   [jonase/eastwood "1.2.2"]
+   [lein-ancient "1.0.0-RC3"]
    [lein-doo "0.1.7"]
    [lein-cljsbuild "1.1.5" :exclusions [[org.clojure/clojure]]]]
 
